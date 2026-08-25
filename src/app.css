@@ -1,0 +1,206 @@
+.am-page {
+  --lit: #f4f5f7;
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100dvh;
+  padding: 4rem 1.5rem;
+  background:
+    radial-gradient(58% 44% at 22% 16%, #21252a, transparent 62%),
+    radial-gradient(54% 44% at 79% 26%, #1b1f23, transparent 60%),
+    radial-gradient(70% 50% at 50% 97%, #171b1f, transparent 66%),
+    #060607;
+  background-size: 180% 180%, 170% 170%, 200% 165%;
+  animation: am-drift 26s ease-in-out infinite alternate;
+  color: var(--lit);
+  font-family: var(--font-sans);
+}
+
+.am-field {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+
+.am-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: radial-gradient(
+    64% 44% at 50% 62%,
+    rgba(0, 0, 0, 0.5),
+    rgba(0, 0, 0, 0.24) 52%,
+    transparent 78%
+  );
+}
+
+.am-stack {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  animation: am-rise 1.2s 0.15s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.am-mark {
+  margin: 0;
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 112, "wght" 900;
+  font-size: clamp(3.6rem, 19vw, 13rem);
+  line-height: 0.92;
+  letter-spacing: 0.005em;
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.05) 44%,
+    rgba(255, 255, 255, 0.03) 58%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke-width: clamp(1.1px, 0.2vw, 2px);
+  -webkit-text-stroke-color: rgba(255, 255, 255, 0.72);
+  filter: drop-shadow(0 0 26px rgba(255, 255, 255, 0.14))
+    drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
+}
+
+.am-role {
+  margin: 2.25rem 0 0;
+  max-width: 36ch;
+  font-size: 0.9375rem;
+  font-weight: 300;
+  line-height: 1.6;
+  letter-spacing: 0.015em;
+  color: #b9bfc6;
+}
+
+.am-meta {
+  margin: 0.9rem 0 0;
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  text-indent: 0.11em;
+  text-transform: uppercase;
+  color: #8c939b;
+}
+
+.am-symbols {
+  margin-top: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.am-symbol {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.875rem;
+  height: 2.875rem;
+  color: #b6bcc3;
+  transition: color 0.3s ease;
+}
+
+.am-symbol svg {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: block;
+}
+
+.am-ticks {
+  position: absolute;
+  inset: 0;
+}
+
+.am-symbol::before,
+.am-symbol::after,
+.am-ticks::before,
+.am-ticks::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: rgba(255, 255, 255, 0.3);
+  border-style: solid;
+  border-width: 0;
+  transition: border-color 0.35s ease, width 0.35s ease, height 0.35s ease;
+}
+
+.am-symbol::before {
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+
+.am-symbol::after {
+  top: 0;
+  right: 0;
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+
+.am-ticks::before {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+
+.am-ticks::after {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 1px;
+  border-right-width: 1px;
+}
+
+.am-symbol:hover {
+  color: var(--lit);
+}
+
+.am-symbol:hover::before,
+.am-symbol:hover::after,
+.am-symbol:hover .am-ticks::before,
+.am-symbol:hover .am-ticks::after {
+  width: 11px;
+  height: 11px;
+  border-color: rgba(255, 255, 255, 0.75);
+}
+
+.am-symbol:active::before,
+.am-symbol:active::after,
+.am-symbol:active .am-ticks::before,
+.am-symbol:active .am-ticks::after {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+@keyframes am-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes am-drift {
+  from {
+    background-position: 0% 0%, 100% 0%, 50% 100%;
+  }
+  to {
+    background-position: 34% 24%, 66% 26%, 42% 76%;
+  }
+}
