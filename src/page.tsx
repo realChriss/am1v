@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './app.css'
 import { startChromeField } from './field'
+import { startFlicker } from './flicker'
 import { GithubIcon } from './icons'
 
 const SYMBOLS = [
@@ -9,6 +10,7 @@ const SYMBOLS = [
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const markRef = useRef<HTMLHeadingElement>(null)
   const resets = useRef(0)
   const [fieldKey, setFieldKey] = useState(0)
 
@@ -24,13 +26,21 @@ export default function Page() {
     })
   }, [fieldKey])
 
+  useEffect(() => {
+    const mark = markRef.current
+    if (!mark) return
+    return startFlicker(mark)
+  }, [])
+
   return (
     <div className="am-page">
       <canvas key={fieldKey} ref={canvasRef} className="am-field" aria-hidden="true" />
       <div className="am-scrim" aria-hidden="true" />
 
       <main className="am-stack">
-        <h1 className="am-mark">am1v</h1>
+        <h1 ref={markRef} className="am-mark">
+          am1v
+        </h1>
 
         <p className="am-role">Web Developer &amp; Software Enthusiast</p>
         <p className="am-meta">21 &middot; Germany</p>
