@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./fonts.css";
 
 @theme {
   --font-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
