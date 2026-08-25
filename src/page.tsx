@@ -2,10 +2,15 @@ import { useEffect, useRef, useState } from 'react'
 import './app.css'
 import { startChromeField } from './field'
 import { startFlicker } from './flicker'
-import { GithubIcon } from './icons'
+import { BitcoinIcon, GithubIcon } from './icons'
 
 const SYMBOLS = [
   { name: 'GitHub', href: 'https://github.com/realChriss', Icon: GithubIcon },
+  {
+    name: 'Bitcoin',
+    href: 'https://3xpl.com/bitcoin/address/bc1qtdcvpw5y5y5m5hy6ye05ha3a245eg9rzfdk77e',
+    Icon: BitcoinIcon,
+  },
 ]
 
 export default function Page() {
@@ -47,7 +52,14 @@ export default function Page() {
 
         <nav className="am-symbols" aria-label="Elsewhere">
           {SYMBOLS.map(({ name, href, Icon }) => (
-            <a key={name} className="am-symbol" href={href} aria-label={name}>
+            <a
+              key={name}
+              className="am-symbol"
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={name}
+            >
               <span className="am-ticks" aria-hidden="true" />
               <Icon />
             </a>
