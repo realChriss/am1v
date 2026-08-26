@@ -318,16 +318,3 @@
     transform: translateY(0);
   }
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .am-page {
-    --sweep: 0s;
-    --t-lift: 0s;
-    --beat: 0s;
-    --fade: 0s;
-  }
-
-  .am-page.is-intro .am-stack * {
-    animation-delay: 0s;
-  }
-}
