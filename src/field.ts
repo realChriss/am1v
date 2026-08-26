@@ -11,6 +11,7 @@ precision mediump float;
 #endif
 uniform vec2 u_res;
 uniform float u_time;
+uniform vec2 u_seed;
 
 float hash(vec2 p) {
   return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
@@ -23,22 +24,22 @@ float noise(vec2 p) {
              mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
 }
 
-float warp(vec2 p) {
+float warp(vec2 p, vec2 s) {
   float v = 0.0, a = 0.5;
   mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
   for (int i = 0; i < 3; i++) {
-    v += a * noise(p);
+    v += a * noise(p + s);
     p = m * p;
     a *= 0.5;
   }
   return v;
 }
 
-float fbm(vec2 p) {
+float fbm(vec2 p, vec2 s) {
   float v = 0.0, a = 0.5;
   mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
   for (int i = 0; i < 4; i++) {
-    v += a * noise(p);
+    v += a * noise(p + s);
     p = m * p;
     a *= 0.5;
   }
@@ -50,11 +51,11 @@ void main() {
   vec2 uv = (gl_FragCoord.xy - 0.5 * res) / res.y;
   float t = u_time * 0.085;
 
-  vec2 q = vec2(warp(uv * 1.2 + vec2(0.0, t)),
-                warp(uv * 1.2 + vec2(5.2, 1.3) - t * 0.6));
-  vec2 r = vec2(warp(uv * 1.45 + 3.0 * q + vec2(1.7, 9.2) + t * 0.7),
-                warp(uv * 1.45 + 3.0 * q + vec2(8.3, 2.8) - t * 0.5));
-  float f = fbm(uv * 1.3 + 3.5 * r);
+  vec2 q = vec2(warp(uv * 1.2 + vec2(0.0, t), u_seed),
+                warp(uv * 1.2 + vec2(5.2, 1.3) - t * 0.6, u_seed));
+  vec2 r = vec2(warp(uv * 1.45 + 3.0 * q + vec2(1.7, 9.2) + t * 0.7, u_seed),
+                warp(uv * 1.45 + 3.0 * q + vec2(8.3, 2.8) - t * 0.5, u_seed));
+  float f = fbm(uv * 1.3 + 3.5 * r, u_seed);
 
   float v = smoothstep(0.15, 0.95, f);
   float bands = sin(v * 7.0 + r.x * 2.0);
@@ -75,6 +76,7 @@ void main() {
 const SCALE = 0.55
 const MAX_PIXELS = 1300000
 const FRAME_MS = 1000 / 30
+const SEED_RANGE = 8
 
 type Renderer = {
   resize: () => void
@@ -95,7 +97,10 @@ function compile(gl: WebGLRenderingContext, type: number, src: string) {
   return shader
 }
 
-function createRenderer(gl: WebGLRenderingContext): Renderer | null {
+function createRenderer(
+  gl: WebGLRenderingContext,
+  seed: readonly [number, number],
+): Renderer | null {
   const vs = compile(gl, gl.VERTEX_SHADER, VERT)
   const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG)
   const program = gl.createProgram()
@@ -123,8 +128,9 @@ function createRenderer(gl: WebGLRenderingContext): Renderer | null {
 
   const uRes = gl.getUniformLocation(program, 'u_res')
   const uTime = gl.getUniformLocation(program, 'u_time')
+  gl.uniform2f(gl.getUniformLocation(program, 'u_seed'), seed[0], seed[1])
   const canvas = gl.canvas as HTMLCanvasElement
-  
+
   let lastW = -1
   let lastH = -1
 
@@ -139,8 +145,7 @@ function createRenderer(gl: WebGLRenderingContext): Renderer | null {
         w = Math.max(1, Math.round(w / k))
         h = Math.max(1, Math.round(h / k))
       }
-      // mobile URL bars resize innerHeight constantly, and a few percent of
-      // stretch is far cheaper than reallocating the drawing buffer
+      // mobile URL bars resize innerHeight constantly; stretching is cheaper
       if (w === lastW && Math.abs(h - lastH) < lastH * 0.12) return
       lastW = w
       lastH = h
@@ -165,6 +170,7 @@ function createRenderer(gl: WebGLRenderingContext): Renderer | null {
 export function startChromeField(
   canvas: HTMLCanvasElement,
   onUnrecoverable?: () => void,
+  onFirstFrame?: () => void,
 ): () => void {
   const gl = (canvas.getContext('webgl', {
     antialias: false,
@@ -177,7 +183,12 @@ export function startChromeField(
     return () => {}
   }
 
-  let renderer = createRenderer(gl)
+  const seed: readonly [number, number] = [
+    Math.random() * SEED_RANGE,
+    Math.random() * SEED_RANGE,
+  ]
+
+  let renderer = createRenderer(gl, seed)
   if (!renderer) return () => {}
 
   const start = performance.now()
@@ -185,6 +196,7 @@ export function startChromeField(
   let running = false
   let lastFrame = 0
   let recover = 0
+  let announced = false
 
   const stop = () => {
     running = false
@@ -199,6 +211,10 @@ export function startChromeField(
     lastFrame = now
     renderer.resize()
     renderer.draw((now - start) / 1000)
+    if (!announced) {
+      announced = true
+      onFirstFrame?.()
+    }
   }
 
   const run = () => {
@@ -210,7 +226,7 @@ export function startChromeField(
   }
 
   const onLost = (event: Event) => {
-    // the browser only tries to restore a context whose loss event was cancelled
+    // only a cancelled loss event gets restored
     event.preventDefault()
     stop()
     renderer = null
@@ -219,7 +235,7 @@ export function startChromeField(
 
   const onRestored = () => {
     window.clearTimeout(recover)
-    renderer = createRenderer(gl)
+    renderer = createRenderer(gl, seed)
     if (!renderer) {
       onUnrecoverable?.()
       return
@@ -227,14 +243,13 @@ export function startChromeField(
     run()
   }
 
-  // Safari drops the context when backgrounded and often never fires
-  // webglcontextrestored, so ask for it and give up if it stays lost
+  // Safari drops the context when backgrounded and often never fires restored
   const revive = () => {
     if (!gl.isContextLost()) return
     try {
       gl.getExtension('WEBGL_lose_context')?.restoreContext()
     } catch {
-      /* throws unless the loss came from loseContext(); ignore */
+      /* throws unless the loss came from loseContext() */
     }
     window.clearTimeout(recover)
     recover = window.setTimeout(() => {
