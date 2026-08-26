@@ -70,7 +70,6 @@
   -webkit-text-fill-color: transparent;
   -webkit-text-stroke-width: clamp(1.1px, 0.2vw, 2px);
   -webkit-text-stroke-color: rgba(255, 255, 255, 0.72);
-  /* keep in step with LIT in flicker.ts */
   filter: drop-shadow(0 0 24px rgba(198, 226, 255, 0.3))
     drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55));
 }
@@ -206,7 +205,6 @@
   }
 }
 
-/* .am-mark opts out in flicker.ts */
 @media (prefers-reduced-motion: reduce) {
   .am-page,
   .am-stack {
