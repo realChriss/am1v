@@ -1,6 +1,9 @@
 .am-page {
   --lit: #f4f5f7;
-  --mark-size: clamp(2.25rem, 11vw, 7.25rem);
+  /* "am1v" is ~3.27em wide at this weight and width, so the vw term is what
+     decides how much of a narrow viewport the mark claims: 24vw keeps it at
+     roughly three quarters of the screen instead of the third 11vw gave it */
+  --mark-size: clamp(3rem, 24vw, 7.25rem);
   --mark-base: 0.2;
   --mark-core: 0.5;
 
