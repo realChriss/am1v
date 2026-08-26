@@ -1,8 +1,6 @@
-/* Self-hosted fonts. Downloaded from Google Fonts and served from this origin
-   so the page makes no third-party requests. Both are variable fonts; the
-   latin and latin-ext subsets are kept. */
+/* Served from this origin so the page makes no third-party requests.
+   Both are variable fonts, latin and latin-ext subsets. */
 
-/* Archivo — wdth 62..125, wght 100..900 */
 @font-face {
   font-family: "Archivo";
   font-style: normal;
@@ -26,7 +24,6 @@
     U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-/* Sora — wght 100..800 */
 @font-face {
   font-family: "Sora";
   font-style: normal;

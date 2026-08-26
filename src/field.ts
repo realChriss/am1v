@@ -139,8 +139,8 @@ function createRenderer(gl: WebGLRenderingContext): Renderer | null {
         w = Math.max(1, Math.round(w / k))
         h = Math.max(1, Math.round(h / k))
       }
-      // mobile URL bars change innerHeight while scrolling; reallocating the
-      // drawing buffer costs far more than a few percent of stretch
+      // mobile URL bars resize innerHeight constantly, and a few percent of
+      // stretch is far cheaper than reallocating the drawing buffer
       if (w === lastW && Math.abs(h - lastH) < lastH * 0.12) return
       lastW = w
       lastH = h
@@ -210,7 +210,7 @@ export function startChromeField(
   }
 
   const onLost = (event: Event) => {
-    // without preventDefault the browser never attempts to restore the context
+    // the browser only tries to restore a context whose loss event was cancelled
     event.preventDefault()
     stop()
     renderer = null
@@ -227,15 +227,14 @@ export function startChromeField(
     run()
   }
 
-  // Safari drops the context when the page is backgrounded and frequently
-  // never fires webglcontextrestored, so ask for it and hard-reset if it
-  // does not come back on its own
+  // Safari drops the context when backgrounded and often never fires
+  // webglcontextrestored, so ask for it and give up if it stays lost
   const revive = () => {
     if (!gl.isContextLost()) return
     try {
       gl.getExtension('WEBGL_lose_context')?.restoreContext()
     } catch {
-      /* only legal for contexts lost via loseContext(); ignore */
+      /* throws unless the loss came from loseContext(); ignore */
     }
     window.clearTimeout(recover)
     recover = window.setTimeout(() => {

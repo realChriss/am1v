@@ -20,8 +20,8 @@ export default function Page() {
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    // a context that never comes back cannot be re-acquired from the same
-    // element, so remount the canvas to get a fresh one
+    // a lost context cannot be re-acquired from the same element, so
+    // remount the canvas to get a fresh one
     return startChromeField(canvas, () => {
       if (resets.current >= 3) return
       resets.current += 1
@@ -35,6 +35,9 @@ export default function Page() {
       <div className="am-scrim" aria-hidden="true" />
 
       <main className="am-stack">
+        <div className="am-mark-base" aria-hidden="true">
+          am1v
+        </div>
         <h1 className="am-mark">am1v</h1>
 
         <p className="am-role">Web Developer &amp; Software Enthusiast</p>
