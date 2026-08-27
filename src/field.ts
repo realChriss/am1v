@@ -40,15 +40,22 @@ float fbm(vec2 p) {
   return v;
 }
 
-float rainLayer(vec2 uv, float t, float cols, float speed, float len, float lean) {
+float rainLayer(vec2 uv, float t, float cols, float speed, float len, float lean, float density) {
   vec2 p = vec2(uv.x * cols + uv.y * lean, uv.y);
   float id = floor(p.x);
-  float x = fract(p.x) - 0.5;
   vec2 r = hash2(vec2(id, 3.7));
+  if (hash(vec2(id, 11.3)) > density) return 0.0;
 
-  float y = fract(p.y * 2.2 + t * speed * (0.7 + r.x) + r.y);
-  float streak = smoothstep(len, 0.0, y) * smoothstep(0.075, 0.0, abs(x));
-  return streak * (0.40 + 0.60 * r.y);
+  float fall = p.y * (1.7 + 1.1 * hash(vec2(id, 5.1)))
+             + t * speed * (0.7 + r.x) + r.y;
+  float cycle = floor(fall);
+  float y = fract(fall);
+
+  vec2 q = hash2(vec2(id, cycle));
+  float x = fract(p.x) - 0.5 + (q.x - 0.5) * 0.82;
+  float streak = smoothstep(len * (0.65 + 0.80 * q.y), 0.0, y)
+               * smoothstep(0.075, 0.0, abs(x));
+  return streak * (0.25 + 0.75 * q.y);
 }
 
 void main() {
@@ -57,9 +64,9 @@ void main() {
   vec2 o = uv + u_seed;
   float t = u_time;
 
-  float rain = rainLayer(o,         t, 26.0, 1.30, 0.45, 1.6) * 0.46
-             + rainLayer(o +  7.0,  t, 44.0, 0.90, 0.36, 1.9) * 0.26
-             + rainLayer(o + 19.0,  t, 70.0, 0.62, 0.28, 2.2) * 0.15;
+  float rain = rainLayer(o,         t, 13.0, 3.60, 0.45, 1.6, 0.55) * 0.46
+             + rainLayer(o +  7.0,  t, 21.0, 2.60, 0.36, 1.9, 0.46) * 0.26
+             + rainLayer(o + 19.0,  t, 33.0, 1.85, 0.28, 2.2, 0.40) * 0.15;
 
   float haze = fbm(uv * 0.9 + vec2(0.0, t * 0.02)) * 0.05;
   float col = 0.018 + haze + rain;
