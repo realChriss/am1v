@@ -17,7 +17,7 @@ const INTRO_WAIT_MS = 900
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stackRef = useRef<HTMLElement>(null)
-  const markRef = useRef<HTMLDivElement>(null)
+  const markRef = useRef<HTMLHeadingElement>(null)
   const resets = useRef(0)
   const [fieldKey, setFieldKey] = useState(0)
   const [litKey, setLitKey] = useState(-1)
@@ -72,10 +72,7 @@ export default function Page() {
       <div className="am-scrim" aria-hidden="true" />
 
       <main className="am-stack" ref={stackRef}>
-        <div className="am-mark-base" ref={markRef} aria-hidden="true">
-          am1v
-        </div>
-        <h1 className="am-mark">am1v</h1>
+        <h1 className="am-mark" ref={markRef}>am1v</h1>
 
         <p className="am-role">Web Developer &amp; Software Enthusiast</p>
         <p className="am-meta">21 &middot; Germany</p>
