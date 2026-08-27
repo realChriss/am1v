@@ -18,10 +18,10 @@
 
 .am-page {
   --lit: #f4f5f7;
-  --sweep: 1.75s;
-  --t-lift: 1.45s;
+  --sweep: 1.2s;
+  --t-lift: 0.7s;
   --beat: 1s;
-  --fade: 1.25s;
+  --fade: 2s;
   --ease-intro: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-fade: cubic-bezier(0.25, 0.6, 0.35, 1);
   --intro-grey: #000000;
