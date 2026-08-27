@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "am1v",
+      "runtimeExecutable": "/Users/chriss/.bun/bin/bun",
+      "runtimeArgs": ["run", "dev"],
+      "port": 5173
+    }
+  ]
+}
