@@ -17,6 +17,11 @@ float hash(vec2 p) {
   return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
 }
 
+vec2 hash2(vec2 p) {
+  return fract(sin(vec2(dot(p, vec2(127.1, 311.7)),
+                        dot(p, vec2(269.5, 183.3)))) * 43758.5453);
+}
+
 float noise(vec2 p) {
   vec2 i = floor(p), f = fract(p);
   vec2 u = f * f * (3.0 - 2.0 * f);
@@ -24,44 +29,40 @@ float noise(vec2 p) {
              mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
 }
 
-float warp(vec2 p, vec2 s) {
+float fbm(vec2 p) {
   float v = 0.0, a = 0.5;
   mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
   for (int i = 0; i < 3; i++) {
-    v += a * noise(p + s);
+    v += a * noise(p + u_seed);
     p = m * p;
     a *= 0.5;
   }
   return v;
 }
 
-float fbm(vec2 p, vec2 s) {
-  float v = 0.0, a = 0.5;
-  mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
-  for (int i = 0; i < 4; i++) {
-    v += a * noise(p + s);
-    p = m * p;
-    a *= 0.5;
-  }
-  return v;
+float rainLayer(vec2 uv, float t, float cols, float speed, float len, float lean) {
+  vec2 p = vec2(uv.x * cols + uv.y * lean, uv.y);
+  float id = floor(p.x);
+  float x = fract(p.x) - 0.5;
+  vec2 r = hash2(vec2(id, 3.7));
+
+  float y = fract(p.y * 2.2 + t * speed * (0.7 + r.x) + r.y);
+  float streak = smoothstep(len, 0.0, y) * smoothstep(0.075, 0.0, abs(x));
+  return streak * (0.40 + 0.60 * r.y);
 }
 
 void main() {
   vec2 res = max(u_res, vec2(1.0));
   vec2 uv = (gl_FragCoord.xy - 0.5 * res) / res.y;
-  float t = u_time * 0.085;
+  vec2 o = uv + u_seed;
+  float t = u_time;
 
-  vec2 q = vec2(warp(uv * 1.2 + vec2(0.0, t), u_seed),
-                warp(uv * 1.2 + vec2(5.2, 1.3) - t * 0.6, u_seed));
-  vec2 r = vec2(warp(uv * 1.45 + 3.0 * q + vec2(1.7, 9.2) + t * 0.7, u_seed),
-                warp(uv * 1.45 + 3.0 * q + vec2(8.3, 2.8) - t * 0.5, u_seed));
-  float f = fbm(uv * 1.3 + 3.5 * r, u_seed);
+  float rain = rainLayer(o,         t, 26.0, 1.30, 0.45, 1.6) * 0.46
+             + rainLayer(o +  7.0,  t, 44.0, 0.90, 0.36, 1.9) * 0.26
+             + rainLayer(o + 19.0,  t, 70.0, 0.62, 0.28, 2.2) * 0.15;
 
-  float v = smoothstep(0.15, 0.95, f);
-  float bands = sin(v * 7.0 + r.x * 2.0);
-  float spec = pow(max(bands, 0.0), 11.0);
-  float sheen = pow(max(bands, 0.0), 3.0);
-  float col = 0.022 + 0.09 * v * v + sheen * 0.07 + spec * 0.3;
+  float haze = fbm(uv * 0.9 + vec2(0.0, t * 0.02)) * 0.05;
+  float col = 0.018 + haze + rain;
 
   float d = length(uv * vec2(1.0, 1.25));
   col *= mix(0.52, 1.0, smoothstep(0.1, 1.1, d));
@@ -75,7 +76,7 @@ void main() {
 
 const SCALE = 0.55
 const MAX_PIXELS = 1300000
-const FRAME_MS = 1000 / 30
+const FRAME_MS = 1000 / 60
 const SEED_RANGE = 8
 
 type Renderer = {
@@ -90,7 +91,7 @@ function compile(gl: WebGLRenderingContext, type: number, src: string) {
   gl.shaderSource(shader, src)
   gl.compileShader(shader)
   if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.warn('[am1v] chrome field shader failed:', gl.getShaderInfoLog(shader))
+    console.warn('[am1v] background field shader failed:', gl.getShaderInfoLog(shader))
     gl.deleteShader(shader)
     return null
   }
@@ -110,7 +111,7 @@ function createRenderer(
   gl.attachShader(program, fs)
   gl.linkProgram(program)
   if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    console.warn('[am1v] chrome field link failed:', gl.getProgramInfoLog(program))
+    console.warn('[am1v] background field link failed:', gl.getProgramInfoLog(program))
     return null
   }
   gl.useProgram(program)
@@ -167,7 +168,7 @@ function createRenderer(
   }
 }
 
-export function startChromeField(
+export function startField(
   canvas: HTMLCanvasElement,
   onUnrecoverable?: () => void,
   onFirstFrame?: () => void,
@@ -230,7 +231,7 @@ export function startChromeField(
     event.preventDefault()
     stop()
     renderer = null
-    console.warn('[am1v] chrome field context lost')
+    console.warn('[am1v] background field context lost')
   }
 
   const onRestored = () => {

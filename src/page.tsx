@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import './app.css'
-import { startChromeField } from './field'
+import { startField } from './field'
 import { BitcoinIcon, GithubIcon } from './icons'
 
 const SYMBOLS = [
@@ -27,7 +27,7 @@ export default function Page() {
     const canvas = canvasRef.current
     if (!canvas) return
     // a lost context cannot be re-acquired from the same element
-    return startChromeField(
+    return startField(
       canvas,
       () => {
         if (resets.current >= 3) return
