@@ -43,6 +43,7 @@ const PROJECTS = [
 
 const SLIDES = 2
 const INTRO_WAIT_MS = 900
+const INTRO_RUN_MS = 2700
 const WHEEL_GAP_MS = 400
 const MARK_FONT = '900 100px Archivo'
 
@@ -56,6 +57,7 @@ export default function Page() {
   const [intro, setIntro] = useState(false)
   const [slide, setSlide] = useState(0)
   const [moved, setMoved] = useState(false)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -111,6 +113,12 @@ export default function Page() {
     return () => mark.removeEventListener('animationend', clear)
   }, [intro])
 
+  useEffect(() => {
+    if (!intro) return
+    const timer = window.setTimeout(() => setReady(true), INTRO_RUN_MS)
+    return () => window.clearTimeout(timer)
+  }, [intro])
+
   const go = (step: number) => {
     setMoved(true)
     setSlide((s) => Math.min(SLIDES - 1, Math.max(0, s + step)))
@@ -142,6 +150,7 @@ export default function Page() {
   }, [])
 
   useEffect(() => {
+    if (!ready) return
     let last = 0
 
     const onWheel = (event: WheelEvent) => {
@@ -155,7 +164,7 @@ export default function Page() {
 
     window.addEventListener('wheel', onWheel, { passive: true })
     return () => window.removeEventListener('wheel', onWheel)
-  }, [])
+  }, [ready])
 
   const lit = litKey === fieldKey
 
