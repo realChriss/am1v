@@ -14,12 +14,15 @@ uniform float u_time;
 uniform vec2 u_seed;
 
 float hash(vec2 p) {
-  return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123);
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
 }
 
 vec2 hash2(vec2 p) {
-  return fract(sin(vec2(dot(p, vec2(127.1, 311.7)),
-                        dot(p, vec2(269.5, 183.3)))) * 43758.5453);
+  vec3 p3 = fract(vec3(p.xyx) * vec3(0.1031, 0.1030, 0.0973));
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.xx + p3.yz) * p3.zy);
 }
 
 float noise(vec2 p) {
@@ -32,7 +35,8 @@ float noise(vec2 p) {
 float fbm(vec2 p) {
   float v = 0.0, a = 0.5;
   mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
-  for (int i = 0; i < 3; i++) {
+  // two octaves: the result is scaled down hard in main(), so a third does not read
+  for (int i = 0; i < 2; i++) {
     v += a * noise(p + u_seed);
     p = m * p;
     a *= 0.5;
@@ -68,7 +72,7 @@ void main() {
              + rainLayer(o +  7.0,  t, 21.0, 2.60, 0.36, 1.9, 0.46) * 0.26
              + rainLayer(o + 19.0,  t, 33.0, 1.85, 0.28, 2.2, 0.40) * 0.15;
 
-  float haze = fbm(uv * 0.9 + vec2(0.0, t * 0.02)) * 0.05;
+  float haze = fbm(uv * 0.9 + vec2(0.0, t * 0.02)) * 0.058;
   float col = 0.018 + haze + rain;
 
   float d = length(uv * vec2(1.0, 1.25));
@@ -81,10 +85,14 @@ void main() {
 }
 `
 
-const SCALE = 0.55
+const SCALE_STEPS = [0.55, 0.42, 0.32, 0.25]
 const MAX_PIXELS = 1300000
 const FRAME_MS = 1000 / 60
 const SEED_RANGE = 8
+
+const GRADE_FRAMES = 30
+const GRADE_SLOW_MS = 20
+const GRADE_STRIKES = 2
 
 type Renderer = {
   resize: () => void
@@ -108,6 +116,7 @@ function compile(gl: WebGLRenderingContext, type: number, src: string) {
 function createRenderer(
   gl: WebGLRenderingContext,
   seed: readonly [number, number],
+  getScale: () => number,
 ): Renderer | null {
   const vs = compile(gl, gl.VERTEX_SHADER, VERT)
   const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG)
@@ -145,8 +154,9 @@ function createRenderer(
   return {
     resize() {
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
-      let w = Math.max(1, Math.round(window.innerWidth * dpr * SCALE))
-      let h = Math.max(1, Math.round(window.innerHeight * dpr * SCALE))
+      const scale = getScale()
+      let w = Math.max(1, Math.round(window.innerWidth * dpr * scale))
+      let h = Math.max(1, Math.round(window.innerHeight * dpr * scale))
       const over = (w * h) / MAX_PIXELS
       if (over > 1) {
         const k = Math.sqrt(over)
@@ -196,7 +206,10 @@ export function startField(
     Math.random() * SEED_RANGE,
   ]
 
-  let renderer = createRenderer(gl, seed)
+  let step = 0
+  const scale = () => SCALE_STEPS[step]
+
+  let renderer = createRenderer(gl, seed, scale)
   if (!renderer) return () => {}
 
   const start = performance.now()
@@ -205,6 +218,34 @@ export function startField(
   let lastFrame = 0
   let recover = 0
   let announced = false
+  let needsResize = true
+
+  let graded = 0
+  let gradeSum = 0
+  let strikes = 0
+
+  // steps down only, so quality cannot oscillate between two levels
+  const grade = (delta: number) => {
+    if (step >= SCALE_STEPS.length - 1) return
+    gradeSum += delta
+    graded += 1
+    if (graded < GRADE_FRAMES) return
+
+    const mean = gradeSum / graded
+    gradeSum = 0
+    graded = 0
+
+    if (mean <= GRADE_SLOW_MS) {
+      strikes = 0
+      return
+    }
+    strikes += 1
+    if (strikes < GRADE_STRIKES) return
+
+    strikes = 0
+    step += 1
+    needsResize = true
+  }
 
   const stop = () => {
     running = false
@@ -216,9 +257,14 @@ export function startField(
     if (!running || !renderer) return
     frame = requestAnimationFrame(loop)
     if (now - lastFrame < FRAME_MS - 1) return
+    const delta = lastFrame ? now - lastFrame : 0
     lastFrame = now
-    renderer.resize()
+    if (needsResize) {
+      needsResize = false
+      renderer.resize()
+    }
     renderer.draw((now - start) / 1000)
+    if (delta) grade(delta)
     if (!announced) {
       announced = true
       onFirstFrame?.()
@@ -230,6 +276,8 @@ export function startField(
     if (running) return
     running = true
     lastFrame = 0
+    gradeSum = 0
+    graded = 0
     frame = requestAnimationFrame(loop)
   }
 
@@ -243,11 +291,12 @@ export function startField(
 
   const onRestored = () => {
     window.clearTimeout(recover)
-    renderer = createRenderer(gl, seed)
+    renderer = createRenderer(gl, seed, scale)
     if (!renderer) {
       onUnrecoverable?.()
       return
     }
+    needsResize = true
     run()
   }
 
@@ -279,20 +328,33 @@ export function startField(
     run()
   }
 
+  const onResize = () => {
+    needsResize = true
+  }
+
+  const observer =
+    typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(onResize)
+  observer?.observe(canvas)
+
   canvas.addEventListener('webglcontextlost', onLost)
   canvas.addEventListener('webglcontextrestored', onRestored)
   document.addEventListener('visibilitychange', onVisibility)
   window.addEventListener('pageshow', onPageShow)
+  window.addEventListener('resize', onResize)
+  window.addEventListener('orientationchange', onResize)
 
   run()
 
   return () => {
     stop()
     window.clearTimeout(recover)
+    observer?.disconnect()
     canvas.removeEventListener('webglcontextlost', onLost)
     canvas.removeEventListener('webglcontextrestored', onRestored)
     document.removeEventListener('visibilitychange', onVisibility)
     window.removeEventListener('pageshow', onPageShow)
+    window.removeEventListener('resize', onResize)
+    window.removeEventListener('orientationchange', onResize)
     if (!gl.isContextLost()) renderer?.release()
   }
 }
