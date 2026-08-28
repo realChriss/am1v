@@ -1,31 +1,14 @@
-@property --reveal {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 200%;
-}
-
-@property --in {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
-@property --lit-gate {
-  syntax: "<number>";
-  inherits: true;
-  initial-value: 0;
-}
-
 .am-page {
   --lit: #f4f5f7;
-  --sweep: 1.2s;
+  --t-sweep: 0.1s;
+  --sweep: 0.5s;
   --t-lift: 0.7s;
   --beat: 1s;
+  --glow: 2.2s;
   --fade: 2s;
   --ease-intro: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-fade: cubic-bezier(0.25, 0.6, 0.35, 1);
   --intro-grey: #000000;
-  --revealed: calc(var(--in) * var(--lit-gate));
   --mark-size: clamp(3rem, 24vw, 7.25rem);
 
   position: relative;
@@ -35,15 +18,6 @@
   padding: 4rem 1.5rem;
   color: var(--lit);
   font-family: var(--font-sans);
-  transition: --lit-gate var(--fade) var(--ease-fade);
-}
-
-.am-page.is-intro {
-  animation: am-in var(--fade) var(--t-lift) var(--ease-intro) both;
-}
-
-.am-page.is-lit {
-  --lit-gate: 1;
 }
 
 .am-field,
@@ -56,7 +30,13 @@
 
 .am-field,
 .am-scrim {
-  opacity: var(--revealed);
+  opacity: 0;
+  transition: opacity var(--fade) var(--t-lift) var(--ease-fade);
+}
+
+.am-page.is-intro.is-lit .am-field,
+.am-page.is-intro.is-lit .am-scrim {
+  opacity: 1;
 }
 
 .am-field {
@@ -70,7 +50,12 @@
   content: "";
   z-index: 0;
   background: var(--intro-grey);
-  opacity: calc(1 - var(--revealed));
+  opacity: 1;
+  transition: opacity var(--fade) var(--t-lift) var(--ease-fade);
+}
+
+.am-page.is-intro.is-lit::before {
+  opacity: 0;
 }
 
 .am-scrim {
@@ -96,16 +81,31 @@
   z-index: 2;
 }
 
-/* not display:none: the --intro-lift measurement needs the stack laid out */
-.am-page:not(.is-intro) .am-stack {
-  visibility: hidden;
+.am-page:not(.is-intro) .am-mark-lift,
+.am-page:not(.is-intro) .am-role,
+.am-page:not(.is-intro) .am-meta,
+.am-page:not(.is-intro) .am-symbol {
+  opacity: 0;
 }
 
-.am-page.is-intro .am-mark {
-  animation:
-    am-sweep var(--sweep) linear backwards,
-    am-lift var(--beat) var(--t-lift) var(--ease-intro) backwards,
-    am-glow calc(var(--sweep) + var(--beat)) var(--ease-fade) backwards;
+.am-page:not(.is-intro) .am-symbol {
+  pointer-events: none;
+}
+
+.am-mark-lift {
+  will-change: transform;
+}
+
+.am-page.is-intro .am-mark-lift {
+  animation: am-lift var(--beat) var(--t-lift) var(--ease-intro) backwards;
+}
+
+.am-page.is-intro .am-mark-face {
+  animation: am-glow var(--glow) var(--ease-fade) backwards;
+}
+
+.am-page.is-intro .am-mark-veil {
+  animation: am-veil var(--sweep) var(--t-sweep) linear both;
 }
 
 .am-page.is-intro .am-role,
@@ -130,35 +130,37 @@
   --mark-fill: hsl(210 14% 90%);
   --mark-edge: hsl(0 0% 100% / 0.95);
   --sweep-angle: 100deg;
-  --mark-mask: linear-gradient(
-    var(--sweep-angle),
-    #000 calc(var(--reveal) - 26%),
-    transparent var(--reveal)
-  );
 
+  position: relative;
   margin: 0;
   font-family: var(--font-display);
   font-variation-settings: "wdth" 114, "wght" 900;
   font-size: var(--mark-size);
   line-height: 0.92;
   letter-spacing: 0.005em;
-  background-image:
-    linear-gradient(
-      var(--sweep-angle),
-      transparent calc(var(--reveal) - 34%),
-      hsl(0 0% 100%) calc(var(--reveal) - 14%),
-      transparent calc(var(--reveal) - 1%)
-    ),
-    linear-gradient(var(--mark-fill), var(--mark-fill));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  -webkit-text-fill-color: transparent;
+  color: var(--mark-fill);
   /* no paint-order: Gecko honours it only on SVG text, so the stroke has to
      read correctly painted over the fill in both engines */
   -webkit-text-stroke: 0.02em var(--mark-edge);
-  -webkit-mask-image: var(--mark-mask);
-  mask-image: var(--mark-mask);
+}
+
+.am-mark-face {
+  display: block;
+}
+
+.am-mark-veil {
+  position: absolute;
+  top: -18%;
+  bottom: -18%;
+  left: 0;
+  width: 200%;
+  pointer-events: none;
+  background: linear-gradient(
+    var(--sweep-angle),
+    transparent 0%,
+    var(--intro-grey) 13%,
+    var(--intro-grey) 100%
+  );
 }
 
 .am-role {
@@ -272,38 +274,23 @@
   border-color: rgba(255, 255, 255, 0.8);
 }
 
-@keyframes am-in {
-  from {
-    --in: 0;
-  }
-  to {
-    --in: 1;
-  }
-}
-
 @keyframes am-focus {
   from {
     opacity: 0;
-    filter: blur(7px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
-    filter: blur(0);
+    transform: none;
   }
 }
 
-@keyframes am-sweep {
+@keyframes am-veil {
   from {
-    --reveal: 0%;
-  }
-  62% {
-    --reveal: 142%;
-  }
-  84% {
-    --reveal: 176%;
+    transform: translateX(-16%);
   }
   to {
-    --reveal: 200%;
+    transform: translateX(40%);
   }
 }
 
@@ -315,6 +302,7 @@
     transform: translateY(0);
   }
 }
+
 @keyframes am-glow {
   0% {
     filter: brightness(1.9);

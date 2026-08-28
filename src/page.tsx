@@ -13,11 +13,12 @@ const SYMBOLS = [
 ]
 
 const INTRO_WAIT_MS = 900
+const MARK_FONT = '900 100px Archivo'
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stackRef = useRef<HTMLElement>(null)
-  const markRef = useRef<HTMLHeadingElement>(null)
+  const markRef = useRef<HTMLDivElement>(null)
   const resets = useRef(0)
   const [fieldKey, setFieldKey] = useState(0)
   const [litKey, setLitKey] = useState(-1)
@@ -40,6 +41,7 @@ export default function Page() {
 
   useEffect(() => {
     let done = false
+    let raf = 0
 
     const begin = () => {
       if (done) return
@@ -50,17 +52,32 @@ export default function Page() {
         const lift = (stack.offsetHeight - mark.offsetHeight) / 2
         stack.style.setProperty('--intro-lift', `${lift}px`)
       }
-      setIntro(true)
+
+      raf = requestAnimationFrame(() => setIntro(true))
     }
 
     const timer = window.setTimeout(begin, INTRO_WAIT_MS)
-    void document.fonts.ready.then(begin)
+    void document.fonts.load(MARK_FONT, 'am1v').then(begin, () => {})
 
     return () => {
       done = true
       window.clearTimeout(timer)
+      cancelAnimationFrame(raf)
     }
   }, [])
+
+  useEffect(() => {
+    const mark = markRef.current
+    if (!intro || !mark) return
+
+    const clear = (event: AnimationEvent) => {
+      if (event.target !== mark) return
+      mark.style.willChange = 'auto'
+      mark.removeEventListener('animationend', clear)
+    }
+    mark.addEventListener('animationend', clear)
+    return () => mark.removeEventListener('animationend', clear)
+  }, [intro])
 
   const lit = litKey === fieldKey
 
@@ -72,7 +89,12 @@ export default function Page() {
       <div className="am-scrim" aria-hidden="true" />
 
       <main className="am-stack" ref={stackRef}>
-        <h1 className="am-mark" ref={markRef}>am1v</h1>
+        <div className="am-mark-lift" ref={markRef}>
+          <h1 className="am-mark">
+            <span className="am-mark-face">am1v</span>
+            <span className="am-mark-veil" aria-hidden="true" />
+          </h1>
+        </div>
 
         <p className="am-role">Web Developer &amp; Software Enthusiast</p>
         <p className="am-meta">21 &middot; Germany</p>
