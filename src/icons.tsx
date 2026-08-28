@@ -28,6 +28,25 @@ export function VexWaveIcon({ className, fill = "currentColor" }: IconProps) {
   )
 }
 
+export function E2ShareIcon({ className, fill = "currentColor" }: IconProps) {
+  return (
+    <svg viewBox="5.44 5.44 13.12 13.12" fill={fill} className={className} aria-hidden="true">
+      <path
+        fillRule="evenodd"
+        d="M8.48 10.4V8.96a3.52 3.52 0 0 1 7.04 0v1.44h-1.6V8.96a1.92 1.92 0 0 0-3.84 0v1.44zM8.16 10.4h7.68a1.44 1.44 0 0 1 1.44 1.44v5.28a1.44 1.44 0 0 1-1.44 1.44H8.16a1.44 1.44 0 0 1-1.44-1.44v-5.28A1.44 1.44 0 0 1 8.16 10.4m.66 1.6a.5.5 0 0 0-.5.5v3.8a.5.5 0 0 0 .5.5h6.36a.5.5 0 0 0 .5-.5v-3.8a.5.5 0 0 0-.5-.5z"
+      />
+    </svg>
+  )
+}
+
+export function PlasmerIcon({ className, fill = "currentColor" }: IconProps) {
+  return (
+    <svg viewBox="8.5 8.5 239 239" fill={fill} className={className} aria-hidden="true">
+      <path d="m129.3 8.47h-85.56v64.67h35.15v-33.46h46.19c35.15 0 52.18 25.19 52.18 51.56 0 27.89-18.42 51.85-52.43 51.85h-45.94v-42.38h20.63l-5.62 20.4 52.17-30.08-52.17-30.49 5.62 21.2h-55.78v165.9h34.9v-73.96h48.35c49.18 0 84.99-35.82 84.99-82.68 0-43.58-30.19-82.56-82.68-82.56z" />
+    </svg>
+  )
+}
+
 export function ArrowUpRightIcon({ className, fill = "currentColor" }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill={fill} className={className} aria-hidden="true">

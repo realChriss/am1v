@@ -5,7 +5,9 @@ import {
   ArrowUpRightIcon,
   BitcoinIcon,
   ChevronIcon,
+  E2ShareIcon,
   GithubIcon,
+  PlasmerIcon,
   VexWaveIcon,
 } from './icons'
 
@@ -25,6 +27,18 @@ const PROJECTS = [
     href: 'https://vexwave.github.io/',
     Icon: VexWaveIcon,
   },
+  {
+    name: 'e2share',
+    blurb: 'End-to-end encrypted file sharing',
+    href: 'https://e2share.net/',
+    Icon: E2ShareIcon,
+  },
+  {
+    name: 'Plasmer',
+    blurb: 'A precision macro built for speed',
+    href: 'https://plasmer.top/',
+    Icon: PlasmerIcon,
+  },
 ]
 
 const SLIDES = 2
@@ -40,13 +54,11 @@ export default function Page() {
   const [litKey, setLitKey] = useState(-1)
   const [intro, setIntro] = useState(false)
   const [slide, setSlide] = useState(0)
-  // the nav pings until it has been used once, then never again
   const [moved, setMoved] = useState(false)
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    // a lost context cannot be re-acquired from the same element
     return startField(
       canvas,
       () => {
