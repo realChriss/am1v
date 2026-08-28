@@ -92,7 +92,9 @@ export default function Page() {
         <div className="am-mark-lift" ref={markRef}>
           <h1 className="am-mark">
             <span className="am-mark-face">am1v</span>
-            <span className="am-mark-veil" aria-hidden="true" />
+            <span className="am-mark-wipe" aria-hidden="true">
+              <span className="am-mark-veil" />
+            </span>
           </h1>
         </div>
 

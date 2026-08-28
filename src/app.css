@@ -139,8 +139,6 @@
   line-height: 0.92;
   letter-spacing: 0.005em;
   color: var(--mark-fill);
-  /* no paint-order: Gecko honours it only on SVG text, so the stroke has to
-     read correctly painted over the fill in both engines */
   -webkit-text-stroke: 0.02em var(--mark-edge);
 }
 
@@ -148,13 +146,22 @@
   display: block;
 }
 
-.am-mark-veil {
+.am-mark-wipe {
   position: absolute;
   top: -18%;
   bottom: -18%;
+  left: -2%;
+  right: -2%;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.am-mark-veil {
+  position: absolute;
+  top: 0;
+  bottom: 0;
   left: 0;
   width: 200%;
-  pointer-events: none;
   background: linear-gradient(
     var(--sweep-angle),
     transparent 0%,
@@ -290,8 +297,7 @@
     transform: translateX(-16%);
   }
   to {
-    transform: translateX(60%);
-    visibility: hidden;
+    transform: translateX(52%);
   }
 }
 
