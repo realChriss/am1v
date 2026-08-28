@@ -43,6 +43,7 @@ const PROJECTS = [
 
 const SLIDES = 2
 const INTRO_WAIT_MS = 900
+const WHEEL_GAP_MS = 400
 const MARK_FONT = '900 100px Archivo'
 
 export default function Page() {
@@ -138,6 +139,22 @@ export default function Page() {
 
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  useEffect(() => {
+    let last = 0
+
+    const onWheel = (event: WheelEvent) => {
+      const now = Date.now()
+      const gap = now - last
+      last = now
+      if (gap >= WHEEL_GAP_MS && Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+        go(event.deltaY > 0 ? 1 : -1)
+      }
+    }
+
+    window.addEventListener('wheel', onWheel, { passive: true })
+    return () => window.removeEventListener('wheel', onWheel)
   }, [])
 
   const lit = litKey === fieldKey
