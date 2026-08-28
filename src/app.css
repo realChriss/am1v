@@ -290,7 +290,8 @@
     transform: translateX(-16%);
   }
   to {
-    transform: translateX(40%);
+    transform: translateX(60%);
+    visibility: hidden;
   }
 }
 
