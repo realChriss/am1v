@@ -7,15 +7,23 @@ type HeroProps = {
   stackRef: RefObject<HTMLElement | null>
   markRef: RefObject<HTMLDivElement | null>
   faceRef: RefObject<HTMLSpanElement | null>
-  face: string
+  glitching: boolean
+  onGlitchDone: () => void
 }
 
-export default function Hero({ active, stackRef, markRef, faceRef, face }: HeroProps) {
+export default function Hero({
+  active,
+  stackRef,
+  markRef,
+  faceRef,
+  glitching,
+  onGlitchDone,
+}: HeroProps) {
   return (
     <section className="am-hero" inert={!active}>
       <main className="am-stack" ref={stackRef}>
         <div className="am-mark-lift" ref={markRef}>
-          <Wordmark faceRef={faceRef} face={face} />
+          <Wordmark faceRef={faceRef} glitching={glitching} onGlitchDone={onGlitchDone} />
         </div>
 
         <p className="am-role">Web Developer &amp; Software Enthusiast</p>

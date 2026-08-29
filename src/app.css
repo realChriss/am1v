@@ -9,7 +9,7 @@
   --slip: 0.9s;
   --ease-intro: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-fade: cubic-bezier(0.25, 0.6, 0.35, 1);
-  --intro-grey: #000000;
+  --ease-morph: steps(5, end);
   --mark-size: clamp(3rem, 24vw, 7.25rem);
   --video-opacity: 0.16;
   --gate-size: clamp(1.375rem, 7vw, 2.125rem);
@@ -26,7 +26,6 @@
   z-index: 2;
   display: flex;
   flex-direction: column;
-  will-change: transform;
   transform: translateY(calc(var(--slide, 0) * -100dvh));
   transition: transform var(--slip) var(--ease-intro);
 }
@@ -43,8 +42,7 @@
 
 .am-video,
 .am-field,
-.am-scrim,
-.am-page::before {
+.am-scrim {
   position: fixed;
   inset: 0;
   pointer-events: none;
@@ -79,18 +77,6 @@
   width: 100%;
   height: 100%;
   display: block;
-}
-
-.am-page::before {
-  content: "";
-  z-index: 0;
-  background: var(--intro-grey);
-  opacity: 1;
-  transition: opacity var(--fade) var(--t-lift) var(--ease-fade);
-}
-
-.am-page.is-intro.is-lit::before {
-  opacity: 0;
 }
 
 .am-scrim {
@@ -130,12 +116,13 @@
   pointer-events: none;
 }
 
-.am-mark-lift {
-  will-change: transform;
-}
-
 .am-page:not(.is-intro) .am-mark-lift {
   transform: translateY(var(--intro-lift, 0px));
+}
+
+.am-page.is-intro .am-track,
+.am-page.is-intro .am-mark-lift {
+  will-change: transform;
 }
 
 .am-page.is-intro .am-mark-lift {
@@ -195,10 +182,10 @@
   letter-spacing: 0.34em;
   text-indent: 0.17em;
   -webkit-text-stroke: 0.02em var(--mark-edge);
-  transition: font-size var(--morph) var(--morph-in) var(--ease-intro),
-    font-variation-settings var(--morph) var(--morph-in) var(--ease-intro),
-    letter-spacing var(--morph) var(--ease-intro),
-    text-indent var(--morph) var(--ease-intro);
+  transition: font-size var(--morph) var(--morph-in) var(--ease-morph),
+    font-variation-settings var(--morph) var(--morph-in) var(--ease-morph),
+    letter-spacing var(--morph) var(--ease-morph),
+    text-indent var(--morph) var(--ease-morph);
 }
 
 .am-page.is-mark .am-mark-face {

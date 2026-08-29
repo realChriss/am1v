@@ -2,16 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 
 const DESKTOP = '(hover: hover) and (pointer: fine)'
 const START_VOLUME = 0.3
-// Let the wordmark start lifting before the audio comes in.
+
 const LIFT_MS = 220
 
-// Phones have a hardware volume rocker; desktops get a gentler default.
 const startVolume = () => (window.matchMedia(DESKTOP).matches ? START_VOLUME : 1)
 
-/**
- * Owns the backdrop video and its volume. `active` is the reveal signal: once
- * the intro is running and the field has painted, playback rolls for real.
- */
 export function useVideo({ active }: { active: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const rolling = useRef(false)
@@ -26,9 +21,6 @@ export function useVideo({ active }: { active: boolean }) {
     video.muted = volume === 0
   }, [volume])
 
-  // Called synchronously from the entering gesture so the browser marks the
-  // element as user-initiated. Silent, and rewound again unless the reveal
-  // already took over in the meantime.
   const prime = useCallback(() => {
     const video = videoRef.current
     if (!video) return
@@ -51,10 +43,10 @@ export function useVideo({ active }: { active: boolean }) {
     const roll = window.setTimeout(() => {
       rolling.current = true
       video.currentTime = 0
-      // The ref, not the state, so changing the volume never restarts playback.
+
       video.volume = volumeRef.current
       video.play().catch(() => {
-        // Audible autoplay refused — fall back to muted and show it as muted.
+
         video.muted = true
         setVolume(0)
         video.play().catch(() => {})

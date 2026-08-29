@@ -5,21 +5,17 @@ type BackdropProps = {
   canvasRef: RefObject<HTMLCanvasElement | null>
   videoRef: RefObject<HTMLVideoElement | null>
   fieldKey: number
+  ready: boolean
 }
 
-/**
- * Everything behind the content: the WebGL rain field, the looping video and
- * the vignette that keeps text readable over both.
- */
-export default function Backdrop({ canvasRef, videoRef, fieldKey }: BackdropProps) {
+export default function Backdrop({ canvasRef, videoRef, fieldKey, ready }: BackdropProps) {
   return (
     <>
-      {/* Keyed so a lost context gets a brand new element to bind to. */}
       <canvas key={fieldKey} ref={canvasRef} className="am-field" aria-hidden="true" />
       <video
         ref={videoRef}
         className="am-video"
-        src={VIDEO_SRC}
+        src={ready ? VIDEO_SRC : undefined}
         loop
         muted
         playsInline

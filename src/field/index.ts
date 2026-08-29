@@ -4,11 +4,18 @@ import { createRenderer } from './renderer'
 const FRAME_MS = 1000 / 60
 const SEED_RANGE = 8
 
+export type Field = {
+  setActive: (on: boolean) => void
+  release: () => void
+}
+
+const IDLE: Field = { setActive: () => {}, release: () => {} }
+
 export function startField(
   canvas: HTMLCanvasElement,
   onUnrecoverable?: () => void,
   onFirstFrame?: () => void,
-): () => void {
+): Field {
   const gl = canvas.getContext('webgl', {
     antialias: false,
     alpha: false,
@@ -17,7 +24,7 @@ export function startField(
 
   if (!gl) {
     console.warn('[am1v] no WebGL context; falling back to the CSS field')
-    return () => {}
+    return IDLE
   }
 
   const seed: readonly [number, number] = [
@@ -28,7 +35,7 @@ export function startField(
   const quality = createQuality()
 
   let renderer = createRenderer(gl, seed, quality.scale)
-  if (!renderer) return () => {}
+  if (!renderer) return IDLE
 
   const start = performance.now()
   let frame = 0
@@ -37,6 +44,7 @@ export function startField(
   let recover = 0
   let announced = false
   let needsResize = true
+  let active = false
 
   const stop = () => {
     running = false
@@ -60,6 +68,7 @@ export function startField(
       announced = true
       onFirstFrame?.()
     }
+    if (!active) stop()
   }
 
   const run = () => {
@@ -127,7 +136,7 @@ export function startField(
 
   run()
 
-  return () => {
+  const release = () => {
     stop()
     window.clearTimeout(recover)
     canvas.removeEventListener('webglcontextlost', onLost)
@@ -137,5 +146,13 @@ export function startField(
     window.removeEventListener('resize', onResize)
     window.removeEventListener('orientationchange', onResize)
     if (!gl.isContextLost()) renderer?.release()
+  }
+
+  return {
+    setActive(on) {
+      active = on
+      if (on) run()
+    },
+    release,
   }
 }

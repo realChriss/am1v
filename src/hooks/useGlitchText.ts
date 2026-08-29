@@ -5,9 +5,6 @@ const GLITCH_MS = 760
 const GLITCH_STEP_MS = 42
 const GLYPHS = '@#%&$*+=<>[]{}/|01am1v.?!~^'
 
-// Progress at which each slot stops scrambling and locks to its final glyph.
-// Slots that survive into the shorter word settle late; the trailing ones that
-// get dropped settle early, so the text collapses from the right.
 const lockTimes = (slots: number, keep: number) =>
   Array.from({ length: slots }, (_, i) =>
     i >= keep
@@ -15,10 +12,6 @@ const lockTimes = (slots: number, keep: number) =>
       : 0.44 + (i / keep) * 0.3 + Math.random() * 0.12,
   )
 
-/**
- * Scrambles GATE_TEXT into MARK_TEXT while `running`, then calls `onDone`.
- * Holds whichever text it last settled on once it stops.
- */
 export function useGlitchText(running: boolean, onDone: () => void) {
   const [face, setFace] = useState(GATE_TEXT)
   const done = useRef(onDone)

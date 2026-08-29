@@ -13,17 +13,16 @@ import Volume from './Volume'
 import Work from './Work'
 
 export default function Page() {
-  const { canvasRef, fieldKey, lit } = useField()
-  const { phase, face, start, refs } = usePhase()
+  const { phase, endGlitch, start, refs } = usePhase()
 
+  const glitching = phase === 'glitch'
   const revealed = phase === 'intro' || phase === 'ready'
-  const marked = revealed || phase === 'glitch'
+  const marked = revealed || glitching
 
+  const { canvasRef, fieldKey, lit } = useField({ active: revealed })
   const { videoRef, volume, setVolume, prime } = useVideo({ active: revealed && lit })
   const { slide, moved, atStart, atEnd, go } = useDeck({ enabled: phase === 'ready' })
 
-  // Priming has to ride the same gesture that opens the gate, or the browser
-  // refuses to play the video with sound.
   const enter = useCallback(() => {
     if (start()) prime()
   }, [start, prime])
@@ -33,7 +32,7 @@ export default function Page() {
   const flags = [
     phase === 'hold' && 'is-hold',
     phase === 'gate' && 'is-gate',
-    phase === 'glitch' && 'is-glitch',
+    glitching && 'is-glitch',
     marked && 'is-mark',
     revealed && 'is-intro',
     lit && 'is-lit',
@@ -42,7 +41,12 @@ export default function Page() {
 
   return (
     <div className={['am-page', ...flags.filter(Boolean)].join(' ')}>
-      <Backdrop canvasRef={canvasRef} videoRef={videoRef} fieldKey={fieldKey} />
+      <Backdrop
+        canvasRef={canvasRef}
+        videoRef={videoRef}
+        fieldKey={fieldKey}
+        ready={phase !== 'hold'}
+      />
 
       <div className="am-track" style={{ '--slide': slide } as CSSProperties}>
         <Hero
@@ -50,7 +54,8 @@ export default function Page() {
           stackRef={refs.stackRef}
           markRef={refs.markRef}
           faceRef={refs.faceRef}
-          face={face}
+          glitching={glitching}
+          onGlitchDone={endGlitch}
         />
         <Work shown={!atStart} />
       </div>

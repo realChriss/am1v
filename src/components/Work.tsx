@@ -3,7 +3,6 @@ import ProjectItem from './ProjectItem'
 
 type WorkProps = { shown: boolean }
 
-/** The second slide of the deck. */
 export default function Work({ shown }: WorkProps) {
   return (
     <section

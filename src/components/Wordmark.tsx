@@ -1,16 +1,16 @@
 import type { RefObject } from 'react'
 import { MARK_TEXT } from '../content'
+import { useGlitchText } from '../hooks/useGlitchText'
 
 type WordmarkProps = {
   faceRef: RefObject<HTMLSpanElement | null>
-  face: string
+  glitching: boolean
+  onGlitchDone: () => void
 }
 
-/**
- * The name. The painted layer is `face`, which scrambles during the glitch, so
- * a stable copy sits underneath it for screen readers.
- */
-export default function Wordmark({ faceRef, face }: WordmarkProps) {
+export default function Wordmark({ faceRef, glitching, onGlitchDone }: WordmarkProps) {
+  const face = useGlitchText(glitching, onGlitchDone)
+
   return (
     <h1 className="am-mark">
       <span className="am-quiet">{MARK_TEXT}</span>

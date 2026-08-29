@@ -1,4 +1,4 @@
-const SCALE_STEPS = [0.55, 0.42, 0.32, 0.25]
+const SCALE_STEPS = [0.42, 0.34, 0.26, 0.2]
 
 const GRADE_FRAMES = 30
 const GRADE_SLOW_MS = 20
@@ -10,11 +10,6 @@ export type Quality = {
   reset: () => void
 }
 
-/**
- * Watches frame times and drops the render scale a step whenever the average
- * stays slow for two runs in a row. `record` returns true on the frame the
- * scale changed, so the caller knows to resize.
- */
 export function createQuality(): Quality {
   let step = 0
   let graded = 0
@@ -46,7 +41,6 @@ export function createQuality(): Quality {
       return true
     },
 
-    // Only the running average; a pending strike survives a pause.
     reset() {
       gradeSum = 0
       graded = 0

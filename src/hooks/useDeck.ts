@@ -1,13 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
 
 const SLIDES = 2
-// Coalesces one flick of an inertial trackpad into a single page turn.
+
 const WHEEL_GAP_MS = 400
 
-/**
- * The vertical deck: which slide is showing, and the keyboard and wheel
- * bindings that turn it. `enabled` keeps it inert until the intro has played.
- */
 export function useDeck({ enabled }: { enabled: boolean }) {
   const [slide, setSlide] = useState(0)
   const [moved, setMoved] = useState(false)
@@ -27,7 +23,7 @@ export function useDeck({ enabled }: { enabled: boolean }) {
 
     const onKey = (event: KeyboardEvent) => {
       if (event.altKey || event.ctrlKey || event.metaKey) return
-      // Let the volume slider keep its own arrow keys.
+
       if (event.target instanceof Element && event.target.closest('.am-volume')) return
 
       const step =

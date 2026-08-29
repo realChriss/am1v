@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 
-/** Any key or a scroll opens the gate; the button handles pointers itself. */
 export function useGateInput(enabled: boolean, onEnter: () => void) {
   useEffect(() => {
     if (!enabled) return
