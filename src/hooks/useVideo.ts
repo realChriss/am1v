@@ -23,14 +23,18 @@ export function useVideo({ active }: { active: boolean }) {
     const video = videoRef.current
     if (!video || rolling.current) return
     rolling.current = true
+
+    const level = volumeRef.current
     video.currentTime = 0
-    video.volume = volumeRef.current
-    video.muted = volumeRef.current === 0
-    video.play().catch(() => {
-      video.muted = true
-      setVolume(0)
-      video.play().catch(() => {})
-    })
+    video.volume = level
+    video.muted = true
+
+    video.play().then(
+      () => {
+        video.muted = level === 0
+      },
+      () => setVolume(0),
+    )
   }, [])
 
   useEffect(() => {
