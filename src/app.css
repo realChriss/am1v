@@ -1,16 +1,17 @@
 .am-page {
   --lit: #f4f5f7;
-  --t-sweep: 0.1s;
-  --sweep: 0.5s;
-  --t-lift: 0.7s;
+  --t-lift: 0.5s;
+  --morph: 0.62s;
+  --morph-in: 0.12s;
+  --settle: 0.2s;
   --beat: 1s;
-  --glow: 2.2s;
   --fade: 2s;
   --slip: 0.9s;
   --ease-intro: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-fade: cubic-bezier(0.25, 0.6, 0.35, 1);
   --intro-grey: #000000;
   --mark-size: clamp(3rem, 24vw, 7.25rem);
+  --gate-size: clamp(1.375rem, 7vw, 2.125rem);
 
   position: relative;
   height: 100dvh;
@@ -100,7 +101,7 @@
   z-index: 2;
 }
 
-.am-page:not(.is-intro) .am-mark-lift,
+.am-page.is-hold .am-mark-lift,
 .am-page:not(.is-intro) .am-role,
 .am-page:not(.is-intro) .am-meta,
 .am-page:not(.is-intro) .am-symbol,
@@ -117,16 +118,12 @@
   will-change: transform;
 }
 
+.am-page:not(.is-intro) .am-mark-lift {
+  transform: translateY(var(--intro-lift, 0px));
+}
+
 .am-page.is-intro .am-mark-lift {
   animation: am-lift var(--beat) var(--t-lift) var(--ease-intro) backwards;
-}
-
-.am-page.is-intro .am-mark-face {
-  animation: am-glow var(--glow) var(--ease-fade) backwards;
-}
-
-.am-page.is-intro .am-mark-veil {
-  animation: am-veil var(--sweep) var(--t-sweep) linear both;
 }
 
 .am-page.is-intro .am-role,
@@ -155,45 +152,94 @@
 .am-mark {
   --mark-fill: hsl(210 14% 90%);
   --mark-edge: hsl(0 0% 100% / 0.95);
-  --sweep-angle: 100deg;
 
   position: relative;
   margin: 0;
+  min-height: calc(var(--mark-size) * 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-display);
-  font-variation-settings: "wdth" 114, "wght" 900;
-  font-size: var(--mark-size);
   line-height: 0.92;
-  letter-spacing: 0.005em;
   color: var(--mark-fill);
-  -webkit-text-stroke: 0.02em var(--mark-edge);
 }
 
 .am-mark-face {
+  position: relative;
   display: block;
+  width: 100%;
+  text-align: center;
+  font-variation-settings: "wdth" 100, "wght" 400;
+  font-size: var(--gate-size);
+  letter-spacing: 0.34em;
+  text-indent: 0.17em;
+  -webkit-text-stroke: 0.02em var(--mark-edge);
+  transition: font-size var(--morph) var(--morph-in) var(--ease-intro),
+    font-variation-settings var(--morph) var(--morph-in) var(--ease-intro),
+    letter-spacing var(--morph) var(--ease-intro),
+    text-indent var(--morph) var(--ease-intro);
 }
 
-.am-mark-wipe {
+.am-page.is-mark .am-mark-face {
+  font-variation-settings: "wdth" 114, "wght" 900;
+  font-size: var(--mark-size);
+  letter-spacing: 0.005em;
+  text-indent: 0.0025em;
+}
+
+.am-page.is-gate .am-mark-face {
+  animation: am-emerge var(--beat) var(--ease-fade) backwards,
+    am-breathe 2.6s var(--ease-fade) calc(var(--beat) + 0.2s) infinite;
+}
+
+.am-page.is-glitch .am-mark-face {
+  animation: am-settle var(--settle) linear both;
+}
+
+.am-page.is-glitch .am-mark-face::before,
+.am-page.is-glitch .am-mark-face::after {
+  content: attr(data-text);
   position: absolute;
-  top: -18%;
-  bottom: -18%;
-  left: -2%;
-  right: -2%;
-  overflow: hidden;
+  inset: 0;
   pointer-events: none;
+  -webkit-text-stroke: 0;
+  mix-blend-mode: screen;
 }
 
-.am-mark-veil {
+.am-page.is-glitch .am-mark-face::before {
+  color: #ff2f6d;
+  animation: am-slice 0.24s steps(1, end) infinite;
+}
+
+.am-page.is-glitch .am-mark-face::after {
+  color: #21dfff;
+  animation: am-slice 0.33s steps(1, end) infinite reverse;
+}
+
+.am-quiet {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 200%;
-  background: linear-gradient(
-    var(--sweep-angle),
-    transparent 0%,
-    var(--intro-grey) 13%,
-    var(--intro-grey) 100%
-  );
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.am-gate {
+  position: fixed;
+  z-index: 4;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  outline-offset: -4px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .am-role {
@@ -500,34 +546,6 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .am-track {
-    transition: none;
-  }
-
-  .am-page.is-intro .am-mark-lift,
-  .am-page.is-intro .am-mark-face,
-  .am-page.is-intro .am-role,
-  .am-page.is-intro .am-meta,
-  .am-page.is-intro .am-symbol,
-  .am-page.is-intro .am-nav,
-  .am-work.is-shown .am-work-title,
-  .am-work.is-shown .am-project,
-  .am-page.is-intro:not(.is-moved) .am-step-down::before {
-    animation: none;
-  }
-
-  .am-mark-wipe {
-    display: none;
-  }
-
-  .am-field,
-  .am-scrim,
-  .am-page::before {
-    transition-duration: 0.01ms;
-  }
-}
-
 @keyframes am-ping {
   from {
     transform: scale(1);
@@ -550,12 +568,58 @@
   }
 }
 
-@keyframes am-veil {
+@keyframes am-emerge {
   from {
-    transform: translateX(-16%);
+    opacity: 0;
   }
   to {
-    transform: translateX(52%);
+    opacity: 1;
+  }
+}
+
+@keyframes am-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes am-settle {
+  from {
+    opacity: var(--gate-opacity, 1);
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes am-slice {
+  0% {
+    clip-path: inset(82% 0 5% 0);
+    transform: translate3d(-0.07em, 0, 0);
+  }
+  20% {
+    clip-path: inset(11% 0 72% 0);
+    transform: translate3d(0.05em, 0, 0);
+  }
+  40% {
+    clip-path: inset(47% 0 34% 0);
+    transform: translate3d(-0.04em, 0, 0);
+  }
+  60% {
+    clip-path: inset(4% 0 86% 0);
+    transform: translate3d(0.08em, 0, 0);
+  }
+  80% {
+    clip-path: inset(64% 0 19% 0);
+    transform: translate3d(-0.03em, 0, 0);
+  }
+  100% {
+    clip-path: inset(30% 0 54% 0);
+    transform: translate3d(0.06em, 0, 0);
   }
 }
 
@@ -565,17 +629,5 @@
   }
   to {
     transform: translateY(0);
-  }
-}
-
-@keyframes am-glow {
-  0% {
-    filter: brightness(1.9);
-  }
-  55% {
-    filter: brightness(1.55);
-  }
-  to {
-    filter: brightness(1);
   }
 }

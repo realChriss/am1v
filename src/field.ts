@@ -35,7 +35,6 @@ float noise(vec2 p) {
 float fbm(vec2 p) {
   float v = 0.0, a = 0.5;
   mat2 m = mat2(1.6, 1.2, -1.2, 1.6);
-  // two octaves: the result is scaled down hard in main(), so a third does not read
   for (int i = 0; i < 2; i++) {
     v += a * noise(p + u_seed);
     p = m * p;
@@ -163,7 +162,6 @@ function createRenderer(
         w = Math.max(1, Math.round(w / k))
         h = Math.max(1, Math.round(h / k))
       }
-      // mobile URL bars resize innerHeight constantly; stretching is cheaper
       if (w === lastW && Math.abs(h - lastH) < lastH * 0.12) return
       lastW = w
       lastH = h
@@ -190,11 +188,11 @@ export function startField(
   onUnrecoverable?: () => void,
   onFirstFrame?: () => void,
 ): () => void {
-  const gl = (canvas.getContext('webgl', {
+  const gl = canvas.getContext('webgl', {
     antialias: false,
     alpha: false,
     powerPreference: 'low-power',
-  }) ?? canvas.getContext('experimental-webgl')) as WebGLRenderingContext | null
+  })
 
   if (!gl) {
     console.warn('[am1v] no WebGL context; falling back to the CSS field')
@@ -224,7 +222,6 @@ export function startField(
   let gradeSum = 0
   let strikes = 0
 
-  // steps down only, so quality cannot oscillate between two levels
   const grade = (delta: number) => {
     if (step >= SCALE_STEPS.length - 1) return
     gradeSum += delta
@@ -282,7 +279,6 @@ export function startField(
   }
 
   const onLost = (event: Event) => {
-    // only a cancelled loss event gets restored
     event.preventDefault()
     stop()
     renderer = null
@@ -300,14 +296,11 @@ export function startField(
     run()
   }
 
-  // Safari drops the context when backgrounded and often never fires restored
   const revive = () => {
     if (!gl.isContextLost()) return
     try {
       gl.getExtension('WEBGL_lose_context')?.restoreContext()
-    } catch {
-      /* throws unless the loss came from loseContext() */
-    }
+    } catch {}
     window.clearTimeout(recover)
     recover = window.setTimeout(() => {
       if (gl.isContextLost()) onUnrecoverable?.()
@@ -332,10 +325,6 @@ export function startField(
     needsResize = true
   }
 
-  const observer =
-    typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(onResize)
-  observer?.observe(canvas)
-
   canvas.addEventListener('webglcontextlost', onLost)
   canvas.addEventListener('webglcontextrestored', onRestored)
   document.addEventListener('visibilitychange', onVisibility)
@@ -348,7 +337,6 @@ export function startField(
   return () => {
     stop()
     window.clearTimeout(recover)
-    observer?.disconnect()
     canvas.removeEventListener('webglcontextlost', onLost)
     canvas.removeEventListener('webglcontextrestored', onRestored)
     document.removeEventListener('visibilitychange', onVisibility)

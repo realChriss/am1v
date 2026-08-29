@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import './app.css'
 import { startField } from './field'
 import {
@@ -42,22 +42,38 @@ const PROJECTS = [
 ]
 
 const SLIDES = 2
-const INTRO_WAIT_MS = 900
-const INTRO_RUN_MS = 2700
+const FONT_WAIT_MS = 900
+const GLITCH_MS = 760
+const GLITCH_STEP_MS = 42
 const WHEEL_GAP_MS = 400
+const READY_MAX_MS = 3400
 const MARK_FONT = '900 100px Archivo'
+const GATE_TEXT = 'enter...'
+const MARK_TEXT = 'am1v'
+const GLYPHS = '@#%&$*+=<>[]{}/|01am1v.?!~^'
+
+type Phase = 'hold' | 'gate' | 'glitch' | 'intro' | 'ready'
+
+const lockTimes = (slots: number, keep: number) =>
+  Array.from({ length: slots }, (_, i) =>
+    i >= keep
+      ? 0.08 + ((i - keep) / (slots - keep)) * 0.2 + Math.random() * 0.05
+      : 0.44 + (i / keep) * 0.3 + Math.random() * 0.12,
+  )
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const stackRef = useRef<HTMLElement>(null)
   const markRef = useRef<HTMLDivElement>(null)
+  const faceRef = useRef<HTMLSpanElement>(null)
+  const navRef = useRef<HTMLElement>(null)
   const resets = useRef(0)
   const [fieldKey, setFieldKey] = useState(0)
   const [litKey, setLitKey] = useState(-1)
-  const [intro, setIntro] = useState(false)
+  const [phase, setPhase] = useState<Phase>('hold')
+  const [face, setFace] = useState(GATE_TEXT)
   const [slide, setSlide] = useState(0)
   const [moved, setMoved] = useState(false)
-  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -73,25 +89,27 @@ export default function Page() {
     )
   }, [fieldKey])
 
+  const measure = () => {
+    const stack = stackRef.current
+    const mark = markRef.current
+    if (!stack || !mark) return
+    const lift = (stack.offsetHeight - mark.offsetHeight) / 2
+    stack.style.setProperty('--intro-lift', `${lift}px`)
+  }
+
   useEffect(() => {
     let done = false
     let raf = 0
 
-    const begin = () => {
+    const open = () => {
       if (done) return
       done = true
-      const stack = stackRef.current
-      const mark = markRef.current
-      if (stack && mark) {
-        const lift = (stack.offsetHeight - mark.offsetHeight) / 2
-        stack.style.setProperty('--intro-lift', `${lift}px`)
-      }
-
-      raf = requestAnimationFrame(() => setIntro(true))
+      measure()
+      raf = requestAnimationFrame(() => setPhase('gate'))
     }
 
-    const timer = window.setTimeout(begin, INTRO_WAIT_MS)
-    void document.fonts.load(MARK_FONT, 'am1v').then(begin, () => {})
+    const timer = window.setTimeout(open, FONT_WAIT_MS)
+    void document.fonts.load(MARK_FONT, 'am1v enter.').then(open, () => {})
 
     return () => {
       done = true
@@ -101,31 +119,111 @@ export default function Page() {
   }, [])
 
   useEffect(() => {
+    if (phase === 'intro' || phase === 'ready') return
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [phase])
+
+  const start = useCallback(() => {
+    if (phase !== 'gate') return
+    measure()
+
+    const el = faceRef.current
+    if (el) el.style.setProperty('--gate-opacity', getComputedStyle(el).opacity)
+
+    setPhase('glitch')
+  }, [phase])
+
+  useEffect(() => {
+    if (phase !== 'gate') return
+
+    const press = (event: KeyboardEvent) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return
+      start()
+    }
+
+    window.addEventListener('keydown', press)
+    window.addEventListener('wheel', start, { passive: true })
+    return () => {
+      window.removeEventListener('keydown', press)
+      window.removeEventListener('wheel', start)
+    }
+  }, [phase, start])
+
+  useEffect(() => {
+    if (phase !== 'glitch') return
+
+    const slots = Math.max(GATE_TEXT.length, MARK_TEXT.length)
+    const locks = lockTimes(slots, MARK_TEXT.length)
+    const began = performance.now()
+    let painted = -Infinity
+    let raf = 0
+
+    const tick = (now: number) => {
+      const t = Math.min(1, (now - began) / GLITCH_MS)
+
+      if (t >= 1) {
+        setFace(MARK_TEXT)
+        setPhase('intro')
+        return
+      }
+
+      if (now - painted >= GLITCH_STEP_MS) {
+        painted = now
+        let out = ''
+        for (let i = 0; i < slots; i++) {
+          out += t >= locks[i] ? (MARK_TEXT[i] ?? '') : GLYPHS[(Math.random() * GLYPHS.length) | 0]
+        }
+        setFace(out)
+      }
+
+      raf = requestAnimationFrame(tick)
+    }
+
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [phase])
+
+  useEffect(() => {
     const mark = markRef.current
-    if (!intro || !mark) return
+    if (phase !== 'intro' || !mark) return
 
     const clear = (event: AnimationEvent) => {
       if (event.target !== mark) return
       mark.style.willChange = 'auto'
-      mark.removeEventListener('animationend', clear)
     }
     mark.addEventListener('animationend', clear)
     return () => mark.removeEventListener('animationend', clear)
-  }, [intro])
+  }, [phase])
 
   useEffect(() => {
-    if (!intro) return
-    const timer = window.setTimeout(() => setReady(true), INTRO_RUN_MS)
-    return () => window.clearTimeout(timer)
-  }, [intro])
+    const nav = navRef.current
+    if (phase !== 'intro' || !nav) return
+
+    const done = (event: AnimationEvent) => {
+      if (event.target !== nav) return
+      setPhase('ready')
+    }
+
+    const timer = window.setTimeout(() => setPhase('ready'), READY_MAX_MS)
+
+    nav.addEventListener('animationend', done)
+    nav.addEventListener('animationcancel', done)
+    return () => {
+      window.clearTimeout(timer)
+      nav.removeEventListener('animationend', done)
+      nav.removeEventListener('animationcancel', done)
+    }
+  }, [phase])
 
   const go = (step: number) => {
     setMoved(true)
     setSlide((s) => Math.min(SLIDES - 1, Math.max(0, s + step)))
   }
 
-  // native scrolling is off, so the keyboard needs its own way through the deck
   useEffect(() => {
+    if (phase !== 'ready') return
+
     const onKey = (event: KeyboardEvent) => {
       if (event.altKey || event.ctrlKey || event.metaKey) return
 
@@ -147,10 +245,10 @@ export default function Page() {
 
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [])
+  }, [phase])
 
   useEffect(() => {
-    if (!ready) return
+    if (phase !== 'ready') return
     let last = 0
 
     const onWheel = (event: WheelEvent) => {
@@ -164,16 +262,24 @@ export default function Page() {
 
     window.addEventListener('wheel', onWheel, { passive: true })
     return () => window.removeEventListener('wheel', onWheel)
-  }, [ready])
+  }, [phase])
 
   const lit = litKey === fieldKey
+  const revealed = phase === 'intro' || phase === 'ready'
+  const marked = revealed || phase === 'glitch'
+
+  const flags = [
+    phase === 'hold' && 'is-hold',
+    phase === 'gate' && 'is-gate',
+    phase === 'glitch' && 'is-glitch',
+    marked && 'is-mark',
+    revealed && 'is-intro',
+    lit && 'is-lit',
+    moved && 'is-moved',
+  ]
 
   return (
-    <div
-      className={`am-page${intro ? ' is-intro' : ''}${lit ? ' is-lit' : ''}${
-        moved ? ' is-moved' : ''
-      }`}
-    >
+    <div className={['am-page', ...flags.filter(Boolean)].join(' ')}>
       <canvas key={fieldKey} ref={canvasRef} className="am-field" aria-hidden="true" />
       <div className="am-scrim" aria-hidden="true" />
 
@@ -182,9 +288,9 @@ export default function Page() {
           <main className="am-stack" ref={stackRef}>
             <div className="am-mark-lift" ref={markRef}>
               <h1 className="am-mark">
-                <span className="am-mark-face">am1v</span>
-                <span className="am-mark-wipe" aria-hidden="true">
-                  <span className="am-mark-veil" />
+                <span className="am-quiet">{MARK_TEXT}</span>
+                <span className="am-mark-face" ref={faceRef} data-text={face} aria-hidden="true">
+                  {face}
                 </span>
               </h1>
             </div>
@@ -251,7 +357,7 @@ export default function Page() {
         </section>
       </div>
 
-      <nav className="am-nav" aria-label="Pages">
+      <nav className="am-nav" ref={navRef} aria-label="Pages">
         <button
           type="button"
           className="am-step am-step-up"
@@ -272,6 +378,16 @@ export default function Page() {
           <ChevronIcon />
         </button>
       </nav>
+
+      {phase === 'gate' && (
+        <button
+          type="button"
+          className="am-gate"
+          onPointerDown={start}
+          onClick={start}
+          aria-label="Enter"
+        />
+      )}
     </div>
   )
 }
