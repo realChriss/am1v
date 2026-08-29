@@ -440,44 +440,44 @@
 }
 
 .am-volume {
+  --thumb: #c6ccd3;
+
+  position: fixed;
+  z-index: 3;
+  top: 2rem;
+  left: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.am-volume-glyph {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.am-volume-glyph svg {
+  width: 2.25rem;
+  height: 2.25rem;
+  display: block;
+}
+
+.am-volume-range {
   display: none;
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .am-volume {
-    --thumb: #c6ccd3;
-
-    position: fixed;
-    z-index: 3;
-    top: 2rem;
-    left: 2rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
   .am-volume:hover,
   .am-volume.is-live {
     --thumb: var(--lit);
-  }
-
-  .am-volume-glyph {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 3.25rem;
-    height: 3.25rem;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: #fff;
-    cursor: pointer;
-  }
-
-  .am-volume-glyph svg {
-    width: 2.25rem;
-    height: 2.25rem;
-    display: block;
   }
 
   .am-volume-range {
@@ -489,6 +489,7 @@
 
     -webkit-appearance: none;
     appearance: none;
+    display: block;
     width: 0;
     height: 1.75rem;
     margin: 0;
