@@ -1,4 +1,4 @@
-const SCALE_STEPS = [0.42, 0.34, 0.26, 0.2]
+const SCALE_STEPS = [0.55, 0.42, 0.32, 0.25]
 
 const GRADE_FRAMES = 30
 const GRADE_SLOW_MS = 20

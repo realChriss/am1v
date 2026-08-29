@@ -9,7 +9,6 @@
   --slip: 0.9s;
   --ease-intro: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-fade: cubic-bezier(0.25, 0.6, 0.35, 1);
-  --ease-morph: steps(5, end);
   --mark-size: clamp(3rem, 24vw, 7.25rem);
   --video-opacity: 0.16;
   --gate-size: clamp(1.375rem, 7vw, 2.125rem);
@@ -182,10 +181,10 @@
   letter-spacing: 0.34em;
   text-indent: 0.17em;
   -webkit-text-stroke: 0.02em var(--mark-edge);
-  transition: font-size var(--morph) var(--morph-in) var(--ease-morph),
-    font-variation-settings var(--morph) var(--morph-in) var(--ease-morph),
-    letter-spacing var(--morph) var(--ease-morph),
-    text-indent var(--morph) var(--ease-morph);
+  transition: font-size var(--morph) var(--morph-in) var(--ease-intro),
+    font-variation-settings var(--morph) var(--morph-in) var(--ease-intro),
+    letter-spacing var(--morph) var(--ease-intro),
+    text-indent var(--morph) var(--ease-intro);
 }
 
 .am-page.is-mark .am-mark-face {
