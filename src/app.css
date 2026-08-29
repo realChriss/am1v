@@ -1,6 +1,6 @@
 .am-page {
   --lit: #f4f5f7;
-  --t-lift: 0.5s;
+  --t-lift: 0.22s;
   --morph: 0.62s;
   --morph-in: 0.12s;
   --settle: 0.2s;
@@ -11,6 +11,7 @@
   --ease-fade: cubic-bezier(0.25, 0.6, 0.35, 1);
   --intro-grey: #000000;
   --mark-size: clamp(3rem, 24vw, 7.25rem);
+  --video-opacity: 0.16;
   --gate-size: clamp(1.375rem, 7vw, 2.125rem);
 
   position: relative;
@@ -40,6 +41,7 @@
   padding: 6rem 1.5rem;
 }
 
+.am-video,
 .am-field,
 .am-scrim,
 .am-page::before {
@@ -48,6 +50,7 @@
   pointer-events: none;
 }
 
+.am-video,
 .am-field,
 .am-scrim {
   opacity: 0;
@@ -57,6 +60,18 @@
 .am-page.is-intro.is-lit .am-field,
 .am-page.is-intro.is-lit .am-scrim {
   opacity: 1;
+}
+
+.am-page.is-intro.is-lit .am-video {
+  opacity: var(--video-opacity);
+}
+
+.am-video {
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .am-field {

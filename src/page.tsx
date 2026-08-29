@@ -47,7 +47,9 @@ const GLITCH_MS = 760
 const GLITCH_STEP_MS = 42
 const WHEEL_GAP_MS = 400
 const READY_MAX_MS = 3400
+const LIFT_MS = 220
 const MARK_FONT = '900 100px Archivo'
+const VIDEO_SRC = 'https://r2.chriss.cyou/9vz16850na.mp4'
 const GATE_TEXT = 'enter...'
 const MARK_TEXT = 'am1v'
 const GLYPHS = '@#%&$*+=<>[]{}/|01am1v.?!~^'
@@ -63,11 +65,13 @@ const lockTimes = (slots: number, keep: number) =>
 
 export default function Page() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
   const stackRef = useRef<HTMLElement>(null)
   const markRef = useRef<HTMLDivElement>(null)
   const faceRef = useRef<HTMLSpanElement>(null)
   const navRef = useRef<HTMLElement>(null)
   const resets = useRef(0)
+  const rolling = useRef(false)
   const [fieldKey, setFieldKey] = useState(0)
   const [litKey, setLitKey] = useState(-1)
   const [phase, setPhase] = useState<Phase>('hold')
@@ -130,6 +134,17 @@ export default function Page() {
 
     const el = faceRef.current
     if (el) el.style.setProperty('--gate-opacity', getComputedStyle(el).opacity)
+
+    const video = videoRef.current
+    if (video) {
+      video.volume = 0
+      video.muted = false
+      video.play().then(() => {
+        if (rolling.current) return
+        video.pause()
+        video.currentTime = 0
+      }, () => {})
+    }
 
     setPhase('glitch')
   }, [phase])
@@ -268,6 +283,23 @@ export default function Page() {
   const revealed = phase === 'intro' || phase === 'ready'
   const marked = revealed || phase === 'glitch'
 
+  useEffect(() => {
+    const video = videoRef.current
+    if (!revealed || !lit || !video) return
+
+    const roll = window.setTimeout(() => {
+      rolling.current = true
+      video.currentTime = 0
+      video.volume = 0.3
+      video.play().catch(() => {
+        video.muted = true
+        video.play().catch(() => {})
+      })
+    }, LIFT_MS)
+
+    return () => window.clearTimeout(roll)
+  }, [revealed, lit])
+
   const flags = [
     phase === 'hold' && 'is-hold',
     phase === 'gate' && 'is-gate',
@@ -281,6 +313,17 @@ export default function Page() {
   return (
     <div className={['am-page', ...flags.filter(Boolean)].join(' ')}>
       <canvas key={fieldKey} ref={canvasRef} className="am-field" aria-hidden="true" />
+      <video
+        ref={videoRef}
+        className="am-video"
+        src={VIDEO_SRC}
+        loop
+        muted
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        tabIndex={-1}
+      />
       <div className="am-scrim" aria-hidden="true" />
 
       <div className="am-track" style={{ '--slide': slide } as CSSProperties}>
