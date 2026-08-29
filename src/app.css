@@ -51,15 +51,15 @@
 .am-field,
 .am-scrim {
   opacity: 0;
-  transition: opacity var(--fade) var(--t-lift) var(--ease-fade);
+  transition: opacity var(--fade) var(--ease-fade);
 }
 
-.am-page.is-intro.is-lit .am-field,
-.am-page.is-intro.is-lit .am-scrim {
+.am-page.is-live.is-lit .am-field,
+.am-page.is-live.is-lit .am-scrim {
   opacity: 1;
 }
 
-.am-page.is-intro.is-lit .am-video {
+.am-page.is-live.is-lit .am-video {
   opacity: var(--video-opacity);
 }
 

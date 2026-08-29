@@ -17,15 +17,15 @@ export default function Page() {
 
   const glitching = phase === 'glitch'
   const revealed = phase === 'intro' || phase === 'ready'
-  const marked = revealed || glitching
+  const live = revealed || glitching
 
-  const { canvasRef, fieldKey, lit } = useField({ active: revealed })
-  const { videoRef, volume, setVolume, prime } = useVideo({ active: revealed && lit })
+  const { canvasRef, fieldKey, lit } = useField({ active: live })
+  const { videoRef, volume, setVolume, roll } = useVideo({ active: live && lit })
   const { slide, moved, atStart, atEnd, go } = useDeck({ enabled: phase === 'ready' })
 
   const enter = useCallback(() => {
-    if (start()) prime()
-  }, [start, prime])
+    if (start()) roll()
+  }, [start, roll])
 
   useGateInput(phase === 'gate', enter)
 
@@ -33,7 +33,8 @@ export default function Page() {
     phase === 'hold' && 'is-hold',
     phase === 'gate' && 'is-gate',
     glitching && 'is-glitch',
-    marked && 'is-mark',
+    live && 'is-mark',
+    live && 'is-live',
     revealed && 'is-intro',
     lit && 'is-lit',
     moved && 'is-moved',
