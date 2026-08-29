@@ -120,7 +120,8 @@
 .am-page:not(.is-intro) .am-role,
 .am-page:not(.is-intro) .am-meta,
 .am-page:not(.is-intro) .am-symbol,
-.am-page:not(.is-intro) .am-nav {
+.am-page:not(.is-intro) .am-nav,
+.am-page:not(.is-intro) .am-volume {
   opacity: 0;
 }
 
@@ -144,7 +145,8 @@
 .am-page.is-intro .am-role,
 .am-page.is-intro .am-meta,
 .am-page.is-intro .am-symbol,
-.am-page.is-intro .am-nav {
+.am-page.is-intro .am-nav,
+.am-page.is-intro .am-volume {
   animation: am-focus var(--beat) var(--ease-intro) backwards;
 }
 
@@ -162,6 +164,10 @@
 
 .am-page.is-intro .am-nav {
   animation-delay: calc(var(--t-lift) + 0.98s);
+}
+
+.am-page.is-intro .am-volume {
+  animation-delay: var(--t-lift);
 }
 
 .am-mark {
@@ -447,6 +453,106 @@
   animation: am-ping 2.4s var(--ease-fade) calc(var(--t-lift) + 1.5s) 3 backwards;
 }
 
+.am-volume {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .am-volume {
+    --thumb: #c6ccd3;
+
+    position: fixed;
+    z-index: 3;
+    top: 2rem;
+    left: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .am-volume:hover,
+  .am-volume.is-live {
+    --thumb: var(--lit);
+  }
+
+  .am-volume-glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .am-volume-glyph svg {
+    width: 2.25rem;
+    height: 2.25rem;
+    display: block;
+  }
+
+  .am-volume-range {
+    --track: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.7) calc(var(--level) * 100%),
+      rgba(255, 255, 255, 0.18) 0
+    );
+
+    -webkit-appearance: none;
+    appearance: none;
+    width: 0;
+    height: 1.75rem;
+    margin: 0;
+    background: none;
+    opacity: 0;
+    pointer-events: none;
+    cursor: pointer;
+    transition: width 0.28s var(--ease-intro), opacity 0.28s var(--ease-intro);
+  }
+
+  .am-volume:hover .am-volume-range,
+  .am-volume.is-live .am-volume-range,
+  .am-volume:has(:focus-visible) .am-volume-range {
+    width: 7.5rem;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .am-volume-range::-webkit-slider-runnable-track {
+    height: 1px;
+    background: var(--track);
+  }
+
+  .am-volume-range::-moz-range-track {
+    height: 1px;
+    background: var(--track);
+  }
+
+  .am-volume-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 10px;
+    height: 10px;
+    margin-top: -4.5px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--thumb);
+    transition: background-color 0.3s ease;
+  }
+
+  .am-volume-range::-moz-range-thumb {
+    width: 10px;
+    height: 10px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--thumb);
+    transition: background-color 0.3s ease;
+  }
+}
+
 .am-work-inner {
   width: min(30rem, 100%);
 }
@@ -546,6 +652,10 @@
 
   .am-nav {
     bottom: 1rem;
+  }
+
+  .am-volume {
+    top: 1rem;
   }
 }
 

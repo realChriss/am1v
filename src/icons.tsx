@@ -70,3 +70,41 @@ export function ChevronIcon({ className }: IconProps) {
     </svg>
   )
 }
+
+const SPEAKER = 'M4 9.4h3.3L11.6 5.7v12.6L7.3 14.6H4z'
+
+export function VolumeIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d={SPEAKER} />
+      <path d="M15 9.2a4.2 4.2 0 0 1 0 5.6" />
+    </svg>
+  )
+}
+
+export function VolumeMuteIcon({ className }: IconProps) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d={SPEAKER} />
+      <path d="M15.6 10.4 18.6 13.6M18.6 10.4 15.6 13.6" />
+    </svg>
+  )
+}

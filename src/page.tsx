@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import './app.css'
 import { startField } from './field'
+import Volume from './volume'
 import {
   ArrowUpRightIcon,
   BitcoinIcon,
@@ -48,6 +49,8 @@ const GLITCH_STEP_MS = 42
 const WHEEL_GAP_MS = 400
 const READY_MAX_MS = 3400
 const LIFT_MS = 220
+const DESKTOP = '(hover: hover) and (pointer: fine)'
+const START_VOLUME = 0.3
 const MARK_FONT = '900 100px Archivo'
 const VIDEO_SRC = 'https://r2.chriss.cyou/9vz16850na.mp4'
 const GATE_TEXT = 'enter...'
@@ -55,6 +58,8 @@ const MARK_TEXT = 'am1v'
 const GLYPHS = '@#%&$*+=<>[]{}/|01am1v.?!~^'
 
 type Phase = 'hold' | 'gate' | 'glitch' | 'intro' | 'ready'
+
+const startVolume = () => (window.matchMedia(DESKTOP).matches ? START_VOLUME : 1)
 
 const lockTimes = (slots: number, keep: number) =>
   Array.from({ length: slots }, (_, i) =>
@@ -78,6 +83,8 @@ export default function Page() {
   const [face, setFace] = useState(GATE_TEXT)
   const [slide, setSlide] = useState(0)
   const [moved, setMoved] = useState(false)
+  const [volume, setVolume] = useState(startVolume)
+  const volumeRef = useRef(volume)
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -92,6 +99,14 @@ export default function Page() {
       () => setLitKey(fieldKey),
     )
   }, [fieldKey])
+
+  useEffect(() => {
+    volumeRef.current = volume
+    const video = videoRef.current
+    if (!video) return
+    video.volume = volume
+    video.muted = volume === 0
+  }, [volume])
 
   const measure = () => {
     const stack = stackRef.current
@@ -241,6 +256,7 @@ export default function Page() {
 
     const onKey = (event: KeyboardEvent) => {
       if (event.altKey || event.ctrlKey || event.metaKey) return
+      if (event.target instanceof Element && event.target.closest('.am-volume')) return
 
       const step =
         event.key === 'ArrowDown' || event.key === 'PageDown'
@@ -290,9 +306,10 @@ export default function Page() {
     const roll = window.setTimeout(() => {
       rolling.current = true
       video.currentTime = 0
-      video.volume = 0.3
+      video.volume = volumeRef.current
       video.play().catch(() => {
         video.muted = true
+        setVolume(0)
         video.play().catch(() => {})
       })
     }, LIFT_MS)
@@ -421,6 +438,8 @@ export default function Page() {
           <ChevronIcon />
         </button>
       </nav>
+
+      <Volume value={volume} onChange={setVolume} active={revealed} />
 
       {phase === 'gate' && (
         <button
