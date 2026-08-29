@@ -8,7 +8,7 @@ import {
 
 export const MARK_TEXT = 'am1v'
 export const GATE_TEXT = 'enter...'
-export const VIDEO_SRC = 'https://r2.chriss.cyou/Chainsaw%20Man%20%5B%20AMV%20%EF%BD%9C%20EDIT%20%5D%20-%20Molly%20(Guitar%20Remix)%20%EF%BD%9C%204K.mp4'
+export const VIDEO_SRC = 'https://r2.chriss.cyou/BODYPARTZ.mp4.mp4'
 
 export const SYMBOLS = [
   { name: 'GitHub', href: 'https://github.com/realChriss', Icon: GithubIcon },
