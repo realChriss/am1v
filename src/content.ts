@@ -8,7 +8,7 @@ import {
 
 export const MARK_TEXT = 'am1v'
 export const GATE_TEXT = 'enter...'
-export const VIDEO_SRC = 'https://r2.chriss.cyou/Listen%F0%9F%AA%90.mp4'
+export const VIDEO_SRC = 'https://r2.chriss.cyou/e86e8dlecl.mp4'
 
 export const SYMBOLS = [
   { name: 'GitHub', href: 'https://github.com/realChriss', Icon: GithubIcon },
