@@ -1,6 +1,6 @@
 # React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This template provides a minimal setup to get React working in Vite with HMR and some [oxlint](https://oxc.rs/docs/guide/usage/linter.html) rules.
 
 Currently, two official plugins are available:
 
@@ -11,65 +11,34 @@ Currently, two official plugins are available:
 
 The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
+## Linting
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Run the linter with:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```sh
+bun run lint
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+Rules live in `.oxlintrc.json`. The `correctness` category is enabled by default; you can turn on stricter
+categories (`suspicious`, `pedantic`, `perf`, `style`, `restriction`) or individual rules there:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
+```jsonc
+{
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn"
   },
-])
+  "rules": {
+    "no-empty": ["error", { "allowEmptyCatch": true }]
+  }
+}
+```
 
+Extra plugins (`jsx-a11y`, `import`, `promise`, `vitest`, …) are opt-in via the `plugins` array. See the
+[oxlint rule list](https://oxc.rs/docs/guide/usage/linter/rules.html) for everything available.
+
+Pass `--fix` to apply auto-fixable issues:
+
+```sh
+bunx oxlint --fix
 ```
