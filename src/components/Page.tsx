@@ -1,4 +1,4 @@
-import { useCallback, type CSSProperties } from 'react'
+import { useCallback, useRef, type CSSProperties } from 'react'
 import '../app.css'
 import { useDeck } from '../hooks/useDeck'
 import { useField } from '../hooks/useField'
@@ -14,6 +14,7 @@ import Work from './Work'
 
 export default function Page() {
   const { phase, endGlitch, start, refs } = usePhase()
+  const trackRef = useRef<HTMLDivElement>(null)
 
   const glitching = phase === 'glitch'
   const revealed = phase === 'intro' || phase === 'ready'
@@ -21,7 +22,7 @@ export default function Page() {
 
   const { canvasRef, fieldKey, lit } = useField({ active: live })
   const { videoRef, volume, setVolume, roll } = useVideo({ active: live && lit })
-  const { slide, moved, atStart, atEnd, go } = useDeck({ enabled: phase === 'ready' })
+  const { slide, moved, atStart, atEnd, go } = useDeck({ enabled: phase === 'ready', trackRef })
 
   const enter = useCallback(() => {
     if (start()) roll()
@@ -49,7 +50,7 @@ export default function Page() {
         ready={phase !== 'hold'}
       />
 
-      <div className="am-track" style={{ '--slide': slide } as CSSProperties}>
+      <div className="am-track" ref={trackRef} style={{ '--slide': slide } as CSSProperties}>
         <Hero
           active={atStart}
           stackRef={refs.stackRef}

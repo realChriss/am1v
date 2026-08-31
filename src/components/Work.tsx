@@ -7,6 +7,7 @@ export default function Work({ shown }: WorkProps) {
   return (
     <section
       className={`am-work${shown ? ' is-shown' : ''}`}
+      data-pane
       aria-labelledby="am-work-title"
       inert={!shown}
     >

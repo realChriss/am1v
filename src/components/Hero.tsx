@@ -20,7 +20,7 @@ export default function Hero({
   onGlitchDone,
 }: HeroProps) {
   return (
-    <section className="am-hero" inert={!active}>
+    <section className="am-hero" data-pane inert={!active}>
       <main className="am-stack" ref={stackRef}>
         <div className="am-mark-lift" ref={markRef}>
           <Wordmark faceRef={faceRef} glitching={glitching} onGlitchDone={onGlitchDone} />
