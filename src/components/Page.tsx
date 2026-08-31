@@ -9,6 +9,7 @@ import Backdrop from './Backdrop'
 import DeckNav from './DeckNav'
 import Gate from './Gate'
 import Hero from './Hero'
+import Skills from './Skills'
 import Volume from './Volume'
 import Work from './Work'
 
@@ -59,7 +60,8 @@ export default function Page() {
           glitching={glitching}
           onGlitchDone={endGlitch}
         />
-        <Work shown={!atStart} />
+        <Work shown={slide === 1} />
+        <Skills shown={slide === 2} />
       </div>
 
       <DeckNav navRef={refs.navRef} atStart={atStart} atEnd={atEnd} onStep={go} />

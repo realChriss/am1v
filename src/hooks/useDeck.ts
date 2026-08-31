@@ -7,7 +7,7 @@ import {
   type RefObject,
 } from 'react'
 
-const SLIDES = 2
+const SLIDES = 3
 const WHEEL_GAP_MS = 400
 const KEY_STEP_PX = 64
 const EDGE_SLOP = 1

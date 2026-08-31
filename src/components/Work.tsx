@@ -12,7 +12,7 @@ export default function Work({ shown }: WorkProps) {
       inert={!shown}
     >
       <div className="am-work-inner">
-        <h2 className="am-work-title" id="am-work-title">
+        <h2 className="am-pane-title" id="am-work-title">
           Projects
         </h2>
 

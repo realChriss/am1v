@@ -48,8 +48,7 @@
   transition: transform var(--slip) var(--ease-intro);
 }
 
-.am-hero,
-.am-work {
+.am-track > [data-pane] {
   --fade-lead: clamp(1.5rem, 5svh, 3rem);
   --fade-tail: var(--safe-bottom);
 
@@ -70,8 +69,7 @@
     --fade-bot var(--settle) var(--ease-fade);
 }
 
-.am-hero[data-scroll],
-.am-work[data-scroll] {
+.am-track > [data-pane][data-scroll] {
   mask-image: linear-gradient(
     to bottom,
     transparent 0,
@@ -81,8 +79,7 @@
   );
 }
 
-.am-hero::-webkit-scrollbar,
-.am-work::-webkit-scrollbar {
+.am-track > [data-pane]::-webkit-scrollbar {
   display: none;
 }
 
@@ -593,7 +590,7 @@
   width: min(30rem, 100%);
 }
 
-.am-work-title {
+.am-pane-title {
   margin: 0 0 clamp(0.75rem, 3svh, 2rem);
   font-size: 0.8125rem;
   font-weight: 400;
@@ -666,18 +663,113 @@
   transform: translate(2px, -2px);
 }
 
-.am-work:not(.is-shown) .am-work-title,
+.am-work:not(.is-shown) .am-pane-title,
 .am-work:not(.is-shown) .am-project {
   opacity: 0;
 }
 
-.am-work.is-shown .am-work-title,
+.am-work.is-shown .am-pane-title,
 .am-work.is-shown .am-project {
   animation: am-focus var(--beat) var(--ease-intro) backwards;
 }
 
 .am-work.is-shown .am-project {
   animation-delay: calc(0.16s + var(--i, 0) * 0.12s);
+}
+
+.am-skills-inner {
+  margin-block: auto;
+  width: min(44rem, 100%);
+}
+
+.am-skill-rail {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+}
+
+.am-skill {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: #b6bcc3;
+  text-decoration: none;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.am-skill::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translate(5px, 5px);
+  pointer-events: none;
+  transition: transform 0.4s var(--ease-intro), border-color 0.3s ease;
+}
+
+.am-skill:hover {
+  color: var(--lit);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+
+.am-skill:hover::after {
+  transform: none;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.am-skill svg {
+  width: 1.75rem;
+  height: 2.2rem;
+  display: block;
+}
+
+.am-skill[data-skill="PHP"] svg {
+  width: 2.2rem;
+}
+
+.am-skill[data-skill="PostgreSQL"] svg {
+  width: 1.5rem;
+}
+
+.am-skill-name {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+  color: #a2a9b1;
+  transition: color 0.3s ease;
+}
+
+.am-skill:hover .am-skill-name {
+  color: #d2d7dc;
+}
+
+.am-skills:not(.is-shown) .am-pane-title,
+.am-skills:not(.is-shown) .am-skill-item {
+  opacity: 0;
+}
+
+.am-skills.is-shown .am-pane-title,
+.am-skills.is-shown .am-skill-item {
+  animation: am-focus var(--beat) var(--ease-intro) backwards;
+}
+
+.am-skills.is-shown .am-skill-item {
+  animation-delay: calc(0.16s + var(--i, 0) * 0.09s);
+}
+
+@media (max-width: 46rem) {
+  .am-skill-rail {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 30rem) {
@@ -689,6 +781,10 @@
 
   .am-project-arrow {
     display: none;
+  }
+
+  .am-skill-rail {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
