@@ -17,18 +17,12 @@ export default function Skills({ shown }: SkillsProps) {
         </h2>
 
         <ul className="am-skill-rail">
-          {SKILLS.map(({ name, href, Icon }, i) => (
+          {SKILLS.map(({ name, Icon }, i) => (
             <li className="am-skill-item" key={name} style={{ '--i': i } as CSSProperties}>
-              <a
-                className="am-skill"
-                data-skill={name}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <div className="am-skill" data-skill={name}>
                 <Icon />
                 <span className="am-skill-name">{name}</span>
-              </a>
+              </div>
             </li>
           ))}
         </ul>

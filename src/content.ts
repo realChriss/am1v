@@ -49,12 +49,12 @@ export const PROJECTS = [
 export type Project = (typeof PROJECTS)[number]
 
 export const SKILLS = [
-  { name: 'TypeScript', href: 'https://www.typescriptlang.org/', Icon: TypeScriptIcon },
-  { name: 'C#', href: 'https://learn.microsoft.com/dotnet/csharp/', Icon: CSharpIcon },
-  { name: 'PHP', href: 'https://www.php.net/', Icon: PhpIcon },
-  { name: 'Bun', href: 'https://bun.sh/', Icon: BunIcon },
-  { name: 'Docker', href: 'https://www.docker.com/', Icon: DockerIcon },
-  { name: 'PostgreSQL', href: 'https://www.postgresql.org/', Icon: PostgresIcon },
+  { name: 'TypeScript', Icon: TypeScriptIcon },
+  { name: 'C#', Icon: CSharpIcon },
+  { name: 'PHP', Icon: PhpIcon },
+  { name: 'Bun', Icon: BunIcon },
+  { name: 'Docker', Icon: DockerIcon },
+  { name: 'PostgreSQL', Icon: PostgresIcon },
 ]
 
 export type Skill = (typeof SKILLS)[number]
