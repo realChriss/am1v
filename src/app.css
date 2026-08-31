@@ -16,6 +16,7 @@
   --morph: 0.62s;
   --morph-in: 0.12s;
   --settle: 0.2s;
+  --pane-out: 0.55s;
   --beat: 1s;
   --fade: 2s;
   --slip: 0.9s;
@@ -591,14 +592,14 @@
 }
 
 .am-pane-title {
-  margin: 0 0 clamp(0.75rem, 3svh, 2rem);
-  font-size: 0.8125rem;
+  margin: 0 0 clamp(1.25rem, 4svh, 2.75rem);
+  font-size: 0.9375rem;
   font-weight: 400;
-  letter-spacing: 0.22em;
-  text-indent: 0.11em;
+  letter-spacing: 0.34em;
+  text-indent: 0.17em;
   text-transform: uppercase;
   text-align: center;
-  color: #8c939b;
+  color: var(--lit);
 }
 
 .am-projects {
@@ -663,18 +664,24 @@
   transform: translate(2px, -2px);
 }
 
-.am-work:not(.is-shown) .am-pane-title,
-.am-work:not(.is-shown) .am-project {
+.am-work .am-pane-title,
+.am-work .am-project {
   opacity: 0;
+  transform: translateY(10px);
+  transition: opacity var(--pane-out) var(--ease-fade),
+    transform var(--pane-out) var(--ease-fade);
 }
 
 .am-work.is-shown .am-pane-title,
 .am-work.is-shown .am-project {
-  animation: am-focus var(--beat) var(--ease-intro) backwards;
+  opacity: 1;
+  transform: none;
+  transition-duration: var(--beat);
+  transition-timing-function: var(--ease-intro);
 }
 
 .am-work.is-shown .am-project {
-  animation-delay: calc(0.16s + var(--i, 0) * 0.12s);
+  transition-delay: calc(0.16s + var(--i, 0) * 0.12s);
 }
 
 .am-skills-inner {
@@ -752,18 +759,24 @@
   color: #d2d7dc;
 }
 
-.am-skills:not(.is-shown) .am-pane-title,
-.am-skills:not(.is-shown) .am-skill-item {
+.am-skills .am-pane-title,
+.am-skills .am-skill-item {
   opacity: 0;
+  transform: translateY(10px);
+  transition: opacity var(--pane-out) var(--ease-fade),
+    transform var(--pane-out) var(--ease-fade);
 }
 
 .am-skills.is-shown .am-pane-title,
 .am-skills.is-shown .am-skill-item {
-  animation: am-focus var(--beat) var(--ease-intro) backwards;
+  opacity: 1;
+  transform: none;
+  transition-duration: var(--beat);
+  transition-timing-function: var(--ease-intro);
 }
 
 .am-skills.is-shown .am-skill-item {
-  animation-delay: calc(0.16s + var(--i, 0) * 0.09s);
+  transition-delay: calc(0.16s + var(--i, 0) * 0.09s);
 }
 
 @media (max-width: 46rem) {
