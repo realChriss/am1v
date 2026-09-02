@@ -8,9 +8,22 @@ import {
 } from 'react'
 
 const SLIDES = 3
-const WHEEL_GAP_MS = 400
+const SLIDE_LOCK_MS = 300
+const WHEEL_ARM_PX = 50
+const WHEEL_IDLE_MS = 600
+const COAST_RATIO = 0.8
+const COAST_MAX_MS = 6000
+const PEAK_WINDOW_MS = 400
+const LINE_PX = 16
 const KEY_STEP_PX = 64
 const EDGE_SLOP = 1
+
+const pixels = (event: WheelEvent) =>
+  event.deltaMode === 1
+    ? event.deltaY * LINE_PX
+    : event.deltaMode === 2
+      ? event.deltaY * window.innerHeight
+      : event.deltaY
 
 type DeckOptions = {
   enabled: boolean
@@ -22,7 +35,13 @@ export function useDeck({ enabled, trackRef }: DeckOptions) {
   const [moved, setMoved] = useState(false)
 
   const slideRef = useRef(0)
+  const armed = useRef(0)
   const lastWheel = useRef(0)
+  const lockUntil = useRef(0)
+  const coastUntil = useRef(0)
+  const peakNow = useRef(0)
+  const peakWas = useRef(0)
+  const peakAt = useRef(0)
   const dir = useRef(1)
 
   const paneRef = useRef<HTMLElement | null>(null)
@@ -104,16 +123,47 @@ export function useDeck({ enabled, trackRef }: DeckOptions) {
     if (!enabled) return
 
     const onWheel = (event: WheelEvent) => {
-      const now = Date.now()
-      const gap = now - lastWheel.current
-      lastWheel.current = now
-
-      if (gap < WHEEL_GAP_MS) return
       if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return
 
-      const down = event.deltaY > 0
+      const now = event.timeStamp
+      const idle = now - lastWheel.current > WHEEL_IDLE_MS
+      lastWheel.current = now
+
+      const delta = pixels(event)
+      const mag = Math.abs(delta)
+
+      if (idle) {
+        armed.current = 0
+        coastUntil.current = 0
+        peakWas.current = 0
+        peakNow.current = 0
+        peakAt.current = now
+      }
+
+      if (now - peakAt.current > PEAK_WINDOW_MS) {
+        peakWas.current = peakNow.current
+        peakNow.current = 0
+        peakAt.current = now
+      }
+      peakNow.current = Math.max(peakNow.current, mag)
+
+      if (now < lockUntil.current) return
+
+      if (now < coastUntil.current && mag < Math.max(peakWas.current, peakNow.current) * COAST_RATIO)
+        return
+
+      const down = delta > 0
+
+      if (down !== armed.current > 0) armed.current = 0
+      armed.current += delta
+
+      if (Math.abs(armed.current) < WHEEL_ARM_PX) return
+
+      armed.current = 0
       if (!edge(down).atEdge) return
 
+      lockUntil.current = now + SLIDE_LOCK_MS
+      coastUntil.current = now + COAST_MAX_MS
       go(down ? 1 : -1)
     }
 
