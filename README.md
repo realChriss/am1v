@@ -1,44 +1,29 @@
-# React + TypeScript + Vite
+# am1v
 
-This template provides a minimal setup to get React working in Vite with HMR and some [oxlint](https://oxc.rs/docs/guide/usage/linter.html) rules.
+Personal site. A three-slide deck over a WebGL background and a looping video layer.
 
-Currently, two official plugins are available:
+React 19 · TypeScript · Vite · Tailwind 4 · Bun
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Develop
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Linting
-
-Run the linter with:
-
-```sh
-bun run lint
+```bash
+bun install && bun run dev
 ```
 
-Rules live in `.oxlintrc.json`. The `correctness` category is enabled by default; you can turn on stricter
-categories (`suspicious`, `pedantic`, `perf`, `style`, `restriction`) or individual rules there:
+| Command | |
+| --- | --- |
+| `bun run dev` | dev server on :5173 |
+| `bun run build` | typecheck + build to `dist/` |
+| `bun run preview` | serve the build |
+| `bun run lint` | oxlint |
 
-```jsonc
-{
-  "categories": {
-    "correctness": "error",
-    "suspicious": "warn"
-  },
-  "rules": {
-    "no-empty": ["error", { "allowEmptyCatch": true }]
-  }
-}
+## Layout
+
 ```
-
-Extra plugins (`jsx-a11y`, `import`, `promise`, `vitest`, …) are opt-in via the `plugins` array. See the
-[oxlint rule list](https://oxc.rs/docs/guide/usage/linter/rules.html) for everything available.
-
-Pass `--fix` to apply auto-fixable issues:
-
-```sh
-bunx oxlint --fix
+src/
+  components/   UI, composed by Page.tsx
+  hooks/        phase, deck, field, video
+  field/        WebGL background
+  content.ts    copy, links, projects, skills
+  app.css       layout + animation
 ```
