@@ -16,10 +16,10 @@
   --morph: 0.62s;
   --morph-in: 0.12s;
   --settle: 0.2s;
-  --pane-out: 0.55s;
+  --pane-out: 0.75s;
   --beat: 1s;
   --fade: 2s;
-  --slip: 0.9s;
+  --slip: 1.35s;
   --ease-intro: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-fade: cubic-bezier(0.25, 0.6, 0.35, 1);
   --mark-size: clamp(3rem, min(24vw, 18svh), 7.25rem);
