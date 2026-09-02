@@ -25,6 +25,7 @@
   --mark-size: clamp(3rem, min(24vw, 18svh), 7.25rem);
   --video-opacity: 0.25;
   --gate-size: clamp(1.375rem, 7vw, 2.125rem);
+  --glass: blur(10px) saturate(1.08);
 
   --edge: clamp(0.5rem, min(4vw, 2.5svh), 2rem);
   --nav-h: 3rem;
@@ -404,6 +405,11 @@
 .am-tick-frame:active .am-ticks::before,
 .am-tick-frame:active .am-ticks::after {
   border-color: rgba(255, 255, 255, 0.8);
+}
+
+.am-glass {
+  -webkit-backdrop-filter: var(--glass);
+  backdrop-filter: var(--glass);
 }
 
 .am-nav {

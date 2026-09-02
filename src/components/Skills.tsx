@@ -19,7 +19,7 @@ export default function Skills({ shown }: SkillsProps) {
         <ul className="am-skill-rail">
           {SKILLS.map(({ name, Icon }, i) => (
             <li className="am-skill-item" key={name} style={{ '--i': i } as CSSProperties}>
-              <div className="am-skill" data-skill={name}>
+              <div className="am-skill am-glass" data-skill={name}>
                 <Icon />
                 <span className="am-skill-name">{name}</span>
               </div>

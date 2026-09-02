@@ -13,7 +13,7 @@ export default function ProjectItem({ project, index }: ProjectItemProps) {
   return (
     <li className="am-project" style={{ '--i': index } as CSSProperties}>
       <a
-        className="am-project-link am-tick-frame"
+        className="am-project-link am-tick-frame am-glass"
         href={href}
         target="_blank"
         rel="noopener noreferrer"

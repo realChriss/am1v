@@ -7,7 +7,7 @@ export default function SocialLinks() {
       {SYMBOLS.map(({ name, href, Icon }, i) => (
         <a
           key={name}
-          className="am-symbol am-tick-frame"
+          className="am-symbol am-tick-frame am-glass"
           style={{ '--i': i } as CSSProperties}
           href={href}
           target="_blank"
