@@ -1,6 +1,5 @@
 import {
   BitcoinIcon,
-  BunIcon,
   CSharpIcon,
   DockerIcon,
   E2ShareIcon,
@@ -8,6 +7,7 @@ import {
   PhpIcon,
   PlasmerIcon,
   PostgresIcon,
+  ReactIcon,
   TypeScriptIcon,
   VexWaveIcon,
 } from './components/icons'
@@ -52,7 +52,7 @@ export const SKILLS = [
   { name: 'TypeScript', Icon: TypeScriptIcon },
   { name: 'C#', Icon: CSharpIcon },
   { name: 'PHP', Icon: PhpIcon },
-  { name: 'Bun', Icon: BunIcon },
+  { name: 'React', Icon: ReactIcon },
   { name: 'Docker', Icon: DockerIcon },
   { name: 'PostgreSQL', Icon: PostgresIcon },
 ]
