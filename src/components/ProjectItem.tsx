@@ -11,14 +11,13 @@ export default function ProjectItem({ project, index }: ProjectItemProps) {
   const { name, blurb, href, Icon } = project
 
   return (
-    <li className="am-project" style={{ '--i': index } as CSSProperties}>
+    <li style={{ '--i': index } as CSSProperties}>
       <a
-        className="am-project-link am-tick-frame"
+        className="am-project-link am-tick-frame am-glass"
         href={href}
         target="_blank"
         rel="noopener noreferrer"
       >
-        <span className="am-glass" aria-hidden="true" />
         <span className="am-ticks" aria-hidden="true" />
         <span className="am-project-glyph" aria-hidden="true">
           <Icon />
