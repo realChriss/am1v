@@ -14,7 +14,7 @@ import {
 
 export const MARK_TEXT = 'am1v'
 export const GATE_TEXT = 'enter...'
-export const VIDEO_SRC = 'https://cdn.am1v.wtf/4fyxqj3e1n-fixed2.mp4'
+export const VIDEO_SRC = 'https://cdn.am1v.wtf/9vz16850n.mp4'
 
 export const SYMBOLS = [
   { name: 'GitHub', href: 'https://github.com/realChriss', Icon: GithubIcon },
