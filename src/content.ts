@@ -28,7 +28,7 @@ export const SYMBOLS = [
 export const PROJECTS = [
   {
     name: 'VexWave',
-    blurb: 'A desktop music player for your own server',
+    blurb: 'A desktop music player',
     href: 'https://vexwave.github.io/',
     Icon: VexWaveIcon,
   },
