@@ -67,9 +67,9 @@ void main() {
   vec2 o = uv + u_seed;
   float t = u_time;
 
-  float rain = rainLayer(o,         t, 13.0, 3.60, 0.45, 1.6, 0.55) * 0.46
-             + rainLayer(o +  7.0,  t, 21.0, 2.60, 0.36, 1.9, 0.46) * 0.26
-             + rainLayer(o + 19.0,  t, 33.0, 1.85, 0.28, 2.2, 0.40) * 0.15;
+  float rain = rainLayer(o,         t, 13.0, 3.60, 0.45, 0.0, 0.55) * 0.46
+             + rainLayer(o +  7.0,  t, 21.0, 2.60, 0.36, 0.0, 0.46) * 0.26
+             + rainLayer(o + 19.0,  t, 33.0, 1.85, 0.28, 0.0, 0.40) * 0.15;
 
   float haze = fbm(uv * 0.9 + vec2(0.0, t * 0.02)) * 0.058;
   float col = 0.018 + haze + rain;
