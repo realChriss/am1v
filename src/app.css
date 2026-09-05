@@ -688,7 +688,8 @@
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(auto-fit, 6.75rem);
+  justify-content: center;
   gap: 0.625rem;
 }
 
@@ -748,12 +749,6 @@
   transform: none;
 }
 
-@media (max-width: 46rem) {
-  .am-skill-rail {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 @media (max-width: 30rem) {
   .am-project-link {
     grid-template-columns: auto 1fr;
@@ -763,10 +758,6 @@
 
   .am-project-arrow {
     display: none;
-  }
-
-  .am-skill-rail {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
 
