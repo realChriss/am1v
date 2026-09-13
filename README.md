@@ -27,3 +27,7 @@ src/
   content.ts    copy, links, projects, skills
   app.css       layout + animation
 ```
+
+## License
+
+View-only, all rights reserved. See [LICENSE](LICENSE).
