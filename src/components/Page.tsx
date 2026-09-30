@@ -2,7 +2,6 @@ import { useCallback, useRef, type CSSProperties } from 'react'
 import '../app.css'
 import { useDeck } from '../hooks/useDeck'
 import { useField } from '../hooks/useField'
-import { useGateInput } from '../hooks/useGateInput'
 import { usePhase } from '../hooks/usePhase'
 import { useVideo } from '../hooks/useVideo'
 import Backdrop from './Backdrop'
@@ -28,8 +27,6 @@ export default function Page() {
   const enter = useCallback(() => {
     if (start()) roll()
   }, [start, roll])
-
-  useGateInput(phase === 'gate', enter)
 
   const flags = [
     phase === 'hold' && 'is-hold',
