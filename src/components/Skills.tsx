@@ -27,6 +27,10 @@ export default function Skills({ shown }: SkillsProps) {
             </li>
           ))}
         </ul>
+
+        <p className="am-skills-more" style={{ '--i': SKILLS.length } as CSSProperties}>
+          and a lot more…
+        </p>
       </div>
     </section>
   )
