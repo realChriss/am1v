@@ -8,6 +8,7 @@ import {
   PlasmerIcon,
   PostgresIcon,
   ReactIcon,
+  ReporaIcon,
   TypeScriptIcon,
   VexWaveIcon,
 } from './components/icons'
@@ -43,6 +44,12 @@ export const PROJECTS = [
     blurb: 'A precision macro built for speed',
     href: 'https://plasmer.top/',
     Icon: PlasmerIcon,
+  },
+  {
+    name: 'Repora',
+    blurb: 'Cards for GitHub repositories',
+    href: 'https://repora.am1v.wtf/',
+    Icon: ReporaIcon,
   },
 ]
 

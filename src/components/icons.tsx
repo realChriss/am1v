@@ -46,6 +46,19 @@ export function PlasmerIcon({ className }: IconProps) {
   )
 }
 
+export function ReporaIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 64 64" fill="currentColor" className={className} aria-hidden="true">
+      <rect x="4" y="4" width="56" height="56" rx="13" fill="none" stroke="currentColor" strokeWidth="5" />
+      <rect x="14" y="15" width="15" height="15" rx="4.5" />
+      <rect x="34" y="16" width="16" height="5" rx="2.5" />
+      <rect x="34" y="24" width="10" height="4" rx="2" fillOpacity="0.7" />
+      <rect x="14" y="37" width="36" height="5" rx="2.5" fillOpacity="0.7" />
+      <rect x="14" y="46" width="22" height="5" rx="2.5" fillOpacity="0.45" />
+    </svg>
+  )
+}
+
 export function TypeScriptIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
