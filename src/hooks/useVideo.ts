@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 const DESKTOP = '(hover: hover) and (pointer: fine)'
-const START_VOLUME = 0.3
+const START_VOLUME = 0.2
 
 const startVolume = () => (window.matchMedia(DESKTOP).matches ? START_VOLUME : 1)
 
