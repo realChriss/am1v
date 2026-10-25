@@ -17,7 +17,7 @@ import {
 
 export const MARK_TEXT = 'am1v'
 export const GATE_TEXT = 'enter...'
-export const VIDEO_SRC = 'https://cdn.am1v.wtf/yeat-2.mp4'
+export const VIDEO_SRC = 'https://cdn.am1v.wtf/killua1.mp4'
 export const FIELD_ENABLED = false
 
 export const SYMBOLS = [
