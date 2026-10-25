@@ -3,6 +3,7 @@ import {
   CSharpIcon,
   DockerIcon,
   E2ShareIcon,
+  FwdhubIcon,
   GithubIcon,
   PhpIcon,
   PlasmerIcon,
@@ -58,6 +59,12 @@ export const PROJECTS = [
     blurb: 'A fast desktop S3 client',
     href: 'https://github.com/realChriss/skybin',
     Icon: SkybinIcon,
+  },
+  {
+    name: 'fwdhub',
+    blurb: 'A terminal UI for SSH port tunnels',
+    href: 'https://github.com/realChriss/fwdhub',
+    Icon: FwdhubIcon,
   },
 ]
 

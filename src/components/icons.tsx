@@ -72,6 +72,16 @@ export function SkybinIcon({ className }: IconProps) {
   )
 }
 
+export function FwdhubIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="10.5 17.5 43 29" fill="currentColor" className={className} aria-hidden="true">
+      <path fillOpacity="0.45" d="M32 21.644a12.5 12.5 0 0 1 0 20.712a12.5 12.5 0 0 1 0-20.712z" />
+      <circle cx="25" cy="32" r="12.5" fill="none" stroke="currentColor" strokeWidth="4" />
+      <circle cx="39" cy="32" r="12.5" fill="none" stroke="currentColor" strokeWidth="4" />
+    </svg>
+  )
+}
+
 export function TypeScriptIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
