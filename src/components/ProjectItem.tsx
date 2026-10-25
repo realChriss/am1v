@@ -12,20 +12,12 @@ export default function ProjectItem({ project, index }: ProjectItemProps) {
 
   return (
     <li style={{ '--i': index } as CSSProperties}>
-      <a
-        className="am-project-link am-tick-frame am-glass"
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        <span className="am-ticks" aria-hidden="true" />
+      <a className="am-project-link" href={href} target="_blank" rel="noopener noreferrer">
         <span className="am-project-glyph" aria-hidden="true">
           <Icon />
         </span>
-        <span className="am-project-body">
-          <span className="am-project-name">{name}</span>
-          <span className="am-project-blurb">{blurb}</span>
-        </span>
+        <span className="am-project-name">{name}</span>
+        <span className="am-project-blurb">{blurb}</span>
         <ArrowUpRightIcon className="am-project-arrow" />
       </a>
     </li>
