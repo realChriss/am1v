@@ -59,6 +59,19 @@ export function ReporaIcon({ className }: IconProps) {
   )
 }
 
+export function SkybinIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="3.5 0.5 17 22.5" fill="currentColor" className={className} aria-hidden="true">
+      <path fillOpacity="0.4" d="M8 8.5a2.5 2.5 0 0 1 .3-5 3.5 3.5 0 0 1 6.6-.6A2.7 2.7 0 0 1 16.5 8.5z" />
+      <path
+        fillRule="evenodd"
+        d="M4 11l2 9.5a6 2 0 0 0 12 0l2-9.5a8 2.6 0 0 0-16 0zM5.4 11.2a6.6 1.7 0 1 0 13.2 0a6.6 1.7 0 1 0-13.2 0z"
+      />
+      <ellipse cx="12" cy="11.2" rx="6.6" ry="1.7" fillOpacity="0.45" />
+    </svg>
+  )
+}
+
 export function TypeScriptIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">

@@ -9,6 +9,7 @@ import {
   PostgresIcon,
   ReactIcon,
   ReporaIcon,
+  SkybinIcon,
   TypeScriptIcon,
   VexWaveIcon,
 } from './components/icons'
@@ -51,6 +52,12 @@ export const PROJECTS = [
     blurb: 'Cards for GitHub repositories',
     href: 'https://repora.am1v.wtf/',
     Icon: ReporaIcon,
+  },
+  {
+    name: 'Skybin',
+    blurb: 'A fast desktop S3 client',
+    href: 'https://github.com/realChriss/skybin',
+    Icon: SkybinIcon,
   },
 ]
 
