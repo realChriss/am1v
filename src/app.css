@@ -693,7 +693,7 @@
 }
 
 .am-work.is-shown .am-project-link {
-  --intro-fade: var(--beat) var(--ease-intro) calc(0.16s + var(--i, 0) * 0.06s);
+  --intro-fade: var(--beat) var(--ease-intro) calc(0.16s + var(--i, 0) * 0.12s);
   opacity: 1;
   transform: none;
 }
