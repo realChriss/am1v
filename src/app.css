@@ -49,6 +49,10 @@
   transition: transform var(--slip) var(--ease-intro);
 }
 
+.am-track[data-sliding] {
+  pointer-events: none;
+}
+
 .am-track > [data-pane] {
   --fade-lead: clamp(1.5rem, 5svh, 3rem);
   --fade-tail: var(--safe-bottom);

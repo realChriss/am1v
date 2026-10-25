@@ -71,6 +71,7 @@ export function useDeck({ enabled, trackRef }: DeckOptions) {
   }, [])
 
   useLayoutEffect(() => {
+    if (slide !== slideRef.current) trackRef.current?.setAttribute('data-sliding', '')
     slideRef.current = slide
     const el =
       trackRef.current?.querySelectorAll<HTMLElement>(':scope > [data-pane]')[slide] ?? null
@@ -78,6 +79,19 @@ export function useDeck({ enabled, trackRef }: DeckOptions) {
     paneRef.current = el
     if (el) el.scrollTop = dir.current > 0 ? 0 : el.scrollHeight
   }, [slide, trackRef])
+
+  useEffect(() => {
+    const track = trackRef.current
+    if (!track) return
+
+    const settle = (event: TransitionEvent) => {
+      if (event.target === track && event.propertyName === 'transform')
+        track.removeAttribute('data-sliding')
+    }
+
+    track.addEventListener('transitionend', settle)
+    return () => track.removeEventListener('transitionend', settle)
+  }, [trackRef])
 
   useEffect(() => {
     if (!enabled) return
