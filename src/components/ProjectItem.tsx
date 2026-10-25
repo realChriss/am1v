@@ -13,7 +13,7 @@ export default function ProjectItem({ project, index }: ProjectItemProps) {
   return (
     <li style={{ '--i': index } as CSSProperties}>
       <a className="am-project-link" href={href} target="_blank" rel="noopener noreferrer">
-        <span className="am-project-glyph" aria-hidden="true">
+        <span className="am-project-glyph" data-project={name} aria-hidden="true">
           <Icon />
         </span>
         <span className="am-project-name">{name}</span>
