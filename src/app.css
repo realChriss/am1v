@@ -744,11 +744,25 @@
 }
 
 .am-skill[data-skill="PHP"] svg {
-  width: 2.2rem;
+  width: 2.6rem;
+  height: 2.6rem;
+  margin-block: -0.2rem;
+}
+
+.am-skill[data-skill="Docker"] svg {
+  width: 2.1rem;
+}
+
+.am-skill[data-skill="React"] svg {
+  width: 2.1rem;
+}
+
+.am-skill[data-skill="Rust"] svg {
+  width: 2.1rem;
 }
 
 .am-skill[data-skill="PostgreSQL"] svg {
-  width: 1.7rem;
+  width: 2.1rem;
 }
 
 .am-skill-name {

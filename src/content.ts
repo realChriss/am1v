@@ -1,6 +1,5 @@
 import {
   BitcoinIcon,
-  CSharpIcon,
   DockerIcon,
   E2ShareIcon,
   FwdhubIcon,
@@ -10,6 +9,7 @@ import {
   PostgresIcon,
   ReactIcon,
   ReporaIcon,
+  RustIcon,
   SkybinIcon,
   TypeScriptIcon,
   VexWaveIcon,
@@ -72,7 +72,7 @@ export type Project = (typeof PROJECTS)[number]
 
 export const SKILLS = [
   { name: 'TypeScript', Icon: TypeScriptIcon },
-  { name: 'C#', Icon: CSharpIcon },
+  { name: 'Rust', Icon: RustIcon },
   { name: 'PHP', Icon: PhpIcon },
   { name: 'React', Icon: ReactIcon },
   { name: 'Docker', Icon: DockerIcon },
