@@ -87,7 +87,7 @@ export function RblxSpotIcon({ className }: IconProps) {
     <svg viewBox="6 6 52 52" fill="currentColor" className={className} aria-hidden="true">
       <path
         fillRule="evenodd"
-        transform="rotate(-15 32 32)"
+        transform="rotate(15 32 32)"
         d="M18 11h28a7 7 0 0 1 7 7v28a7 7 0 0 1-7 7H18a7 7 0 0 1-7-7V18a7 7 0 0 1 7-7M32 20a12 12 0 1 0 0 24a12 12 0 0 0 0-24m0 5.2a6.8 6.8 0 1 1 0 13.6a6.8 6.8 0 0 1 0-13.6"
       />
     </svg>
