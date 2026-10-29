@@ -7,6 +7,7 @@ import {
   PhpIcon,
   PlasmerIcon,
   PostgresIcon,
+  RblxSpotIcon,
   ReactIcon,
   ReporaIcon,
   RustIcon,
@@ -65,6 +66,12 @@ export const PROJECTS = [
     blurb: 'A terminal UI for SSH port tunnels',
     href: 'https://github.com/realChriss/fwdhub',
     Icon: FwdhubIcon,
+  },
+  {
+    name: 'rblx-spot',
+    blurb: 'Shows where your Roblox server is',
+    href: 'https://github.com/realChriss/rblx-spot',
+    Icon: RblxSpotIcon,
   },
 ]
 
